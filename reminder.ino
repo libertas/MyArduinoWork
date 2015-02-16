@@ -24,4 +24,7 @@ void checkButton() {
   //play the music
   digitalWrite(LED, HIGH);  for (int i = 0; i < length; i++) {    if (notes[i] == ' ') {      delay(beats[i] * tempo); // rest    } else {      playNote(notes[i], beats[i] * tempo);    }     // pause between notes    delay(tempo / 2);   }
   shine();
-  delay(1000 * 60 * 60 * 2); //60 * 60 * 2 seconds,which means 2 hours}
+  //delay 2 hours
+  for(int i = 0; i < 60; i++)
+  	for(int j = 0; j < 60; j++)
+  		delay(2000); }
