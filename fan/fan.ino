@@ -9,6 +9,7 @@ void setup() {
   noInterrupts();
   CLKPR = 1 << CLKPCE;  // Preparing the process
   CLKPR = 8;  // Set speed = 1/256 of ordinary spped
+  interrupts();
 }
 
 void loop() {
