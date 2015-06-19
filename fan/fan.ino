@@ -1,3 +1,4 @@
+#include <avr/sleep.h>
 
 int S = 13;  // The output pin
 
@@ -19,6 +20,9 @@ void loop() {
   digitalWrite(S, LOW);
 
   // Stop forever
-  while(1)
-    continue;
+  set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+  sleep_enable();
+  sleep_mode();
+  sleep_disable();
 }
+
