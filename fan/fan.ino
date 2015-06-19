@@ -1,3 +1,4 @@
+#include <avr/power.h>
 #include <avr/sleep.h>
 
 int S = 13;  // The output pin
@@ -6,10 +7,7 @@ void setup() {
   pinMode(S, OUTPUT);
 
   // Slow down the CPU
-  noInterrupts();
-  CLKPR = 1 << CLKPCE;  // Preparing the process
-  CLKPR = 8;  // Set speed = 1/256 of ordinary spped
-  interrupts();
+  clock_prescale_set(clock_div_256);
 }
 
 void loop() {
