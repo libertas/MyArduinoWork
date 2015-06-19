@@ -5,6 +5,10 @@ int S = 13;  // The output pin
 void setup() {
   pinMode(S, OUTPUT);
 
+  // Slow down the CPU
+  noInterrupts();
+  CLKPR = 1 << CLKPCE;  // Preparing the process
+  CLKPR = 8;  // Set speed = 1/256 of ordinary spped
 }
 
 void loop() {
@@ -12,9 +16,7 @@ void loop() {
   digitalWrite(S, HIGH);
 
   // Delay 1 hour
-  for(int i=0; i<60; i++)
-    for(int j=0; j<60; j++)
-      delay(1000);
+  delay(14062); // 14062.5 = 1000*60*60/256
 
   // Stop the fan
   digitalWrite(S, LOW);
