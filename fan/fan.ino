@@ -1,7 +1,7 @@
 #include <avr/power.h>
 #include <avr/sleep.h>
 
-int S = 13;  // The output pin
+int S = 12;  // The output pin
 
 void setup() {
   pinMode(S, OUTPUT);
