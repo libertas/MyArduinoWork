@@ -52,21 +52,13 @@ void loop() {
   digitalWrite(S, HIGH);
 
   // Delay 0.5 hour
-  for(; angle > 0; angle -=45)
+  for(; angle>=0; angle-=45)
     for(int i=0; i<30; i++)
       for(int j=0; j<60; j++)
       {
         delay(1000);
         myServo.write(angle);
       }
-
-
-  // Reset the servo
-  for(int i=0; i<180; i++)
-  {
-    myServo.write(0);
-    delay(15);
-  }
 
   // Stop the fan
   digitalWrite(S, LOW);
