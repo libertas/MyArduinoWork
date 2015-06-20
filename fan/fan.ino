@@ -40,7 +40,7 @@ void setup() {
   for(int i=0; i<180; i++)
   {
     myServo.write(0);
-    delay(20);
+    delay(15);
   }
 
   pinMode(Button, INPUT_PULLUP);
