@@ -53,10 +53,10 @@ void loop() {
 
   // Delay 0.5 hour
   for(; angle > 0; angle -=45)
-    for(int i=0; i<3; i++)
-      for(int j=0; j<6; j++)
+    for(int i=0; i<30; i++)
+      for(int j=0; j<60; j++)
       {
-        delay(100);
+        delay(1000);
         myServo.write(angle);
       }
 
