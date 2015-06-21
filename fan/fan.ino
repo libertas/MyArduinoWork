@@ -55,9 +55,11 @@ void loop() {
   {
     // Delay 0.5 hour
     for(int i=0; i<30; i++)
+    {
       for(int j=0; j<60; j++)
         delay(1000);
-    moveServo();
+      moveServo();
+    }
   }
 
   // Stop the fan
