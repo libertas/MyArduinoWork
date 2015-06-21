@@ -34,6 +34,7 @@ void onButtonClicked()
 }
 
 void setup() {
+  // Set up the pins
   pinMode(S, OUTPUT);
   pinMode(LED, OUTPUT);
 
@@ -41,6 +42,7 @@ void setup() {
   myServo.attach(ServoPin);
   moveServo();
 
+  // Set up the button
   pinMode(Button, INPUT_PULLUP);
   attachInterrupt(0, onButtonClicked, LOW);
 }
@@ -49,9 +51,9 @@ void loop() {
   // Start the fan
   digitalWrite(S, HIGH);
 
-  // Delay 0.5 hour
   for(; angle>=0; angle-=45)
   {
+    // Delay 0.5 hour
     for(int i=0; i<30; i++)
       for(int j=0; j<60; j++)
         delay(1000);
