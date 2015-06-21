@@ -15,6 +15,12 @@ int LED = 13; // The LED pin
 */
 int angle = 0;
 
+void moveServo()
+{
+   myServo.write(angle);
+   delay(15);
+}
+
 void onButtonClicked()
 {
   digitalWrite(LED, HIGH);
@@ -24,11 +30,7 @@ void onButtonClicked()
     angle += 45;
   else
     angle = 0;
-  for(int i=0; i<45; i++)
-  {
-    myServo.write(angle);
-    delay(15);
-  }
+  moveServo();
 }
 
 void setup() {
@@ -37,11 +39,7 @@ void setup() {
 
   // Init the servo
   myServo.attach(ServoPin);
-  for(int i=0; i<180; i++)
-  {
-    myServo.write(0);
-    delay(15);
-  }
+  moveServo();
 
   pinMode(Button, INPUT_PULLUP);
   attachInterrupt(0, onButtonClicked, LOW);
@@ -53,12 +51,12 @@ void loop() {
 
   // Delay 0.5 hour
   for(; angle>=0; angle-=45)
+  {
     for(int i=0; i<30; i++)
       for(int j=0; j<60; j++)
-      {
         delay(1000);
-        myServo.write(angle);
-      }
+    moveServo();
+  }
 
   // Stop the fan
   digitalWrite(S, LOW);
