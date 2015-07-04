@@ -17,20 +17,30 @@ int angle = 0;
 
 void moveServo()
 {
-   myServo.write(angle);
-   delay(15);
+  myServo.write(angle);
+  delay(15);
 }
+
+int buttonCount = 10000;  // The default number is a magic number
 
 void onButtonClicked()
 {
-  digitalWrite(LED, HIGH);
-  delay(1000);
-  digitalWrite(LED, LOW);
-  if(angle < 180)
-    angle += 45;
+  if (buttonCount <= 0)
+  {
+    digitalWrite(LED, HIGH);
+    delay(1000);
+    digitalWrite(LED, LOW);
+    if (angle < 180)
+      angle += 45;
+    else
+      angle = 0;
+    moveServo();
+    buttonCount = 10000;
+  }
   else
-    angle = 0;
-  moveServo();
+  {
+    buttonCount++;
+  }
 }
 
 void setup() {
@@ -51,12 +61,12 @@ void loop() {
   // Start the fan
   digitalWrite(S, HIGH);
 
-  for(; angle>=0; angle-=45)
+  for (; angle >= 0; angle -= 45)
   {
     // Delay 0.5 hour
-    for(int i=0; i<30; i++)
+    for (int i = 0; i < 30; i++)
     {
-      for(int j=0; j<60; j++)
+      for (int j = 0; j < 60; j++)
         delay(1000);
       moveServo();
     }
