@@ -25,7 +25,7 @@ int buttonCount = 10000;  // The default number is a magic number
 
 void onButtonClicked()
 {
-  if (buttonCount <= 10000)
+  if (buttonCount < 10000)
   {
     digitalWrite(LED, HIGH);
     delay(1000);
