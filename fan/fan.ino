@@ -82,7 +82,7 @@ U8GLIB_NHD_C12864 u8g(4, 3, 7, 5, 6);	// SPI Com: SCK = 13, MOSI = 11, CS = 10, 
 
 void draw(unsigned long time) {
   char stime[20];
-  u8g.firstPage(); 
+  u8g.firstPage();
   do{
     // graphic commands to redraw the complete screen should be placed here  
     u8g.setFont(u8g_font_unifont);
@@ -97,7 +97,7 @@ void draw(unsigned long time) {
 
 void drawShutdown()
 {
-  u8g.firstPage(); 
+  u8g.firstPage();
   do{
     // graphic commands to redraw the complete screen should be placed here  
     u8g.setFont(u8g_font_unifont);
