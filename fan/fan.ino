@@ -111,8 +111,8 @@ void drawShutdown()
 
 void setupScreen(void) {
 
-  // flip screen, if required
-  // u8g.setRot180();
+  // rotate screen, if required
+  u8g.setRot180();
 
   // set SPI backup if required
   //u8g.setHardwareBackup(u8g_backup_avr_spi);
