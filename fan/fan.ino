@@ -82,20 +82,24 @@ U8GLIB_NHD_C12864 u8g(4, 3, 7, 5, 6);	// SPI Com: SCK = 13, MOSI = 11, CS = 10, 
 
 void draw(unsigned long time) {
   char stime[20];
-  // graphic commands to redraw the complete screen should be placed here  
-  u8g.setFont(u8g_font_unifont);
-  //u8g.setFont(u8g_font_osb21);
-  u8g.drawStr( 0, 10, "Welcome to use!");
-  u8g.drawStr( 0, 25, "Time left:");
-  sprintf(stime, "%ld", time);
-  u8g.drawStr( 0, 40, stime);
+  u8g.firstPage(); 
+  do{
+    // graphic commands to redraw the complete screen should be placed here  
+    u8g.setFont(u8g_font_unifont);
+    //u8g.setFont(u8g_font_osb21);
+    u8g.drawStr( 0, 10, "Welcome to use!");
+    u8g.drawStr( 0, 25, "Time left:");
+    sprintf(stime, "%ld minutes.", time);
+    u8g.drawStr( 0, 40, stime);
+  } 
+  while(u8g.nextPage());
 }
 
 void setupScreen(void) {
-  
+
   // flip screen, if required
   // u8g.setRot180();
-  
+
   // set SPI backup if required
   //u8g.setHardwareBackup(u8g_backup_avr_spi);
 
@@ -123,10 +127,11 @@ int ServoPin = 9;  // The servo
 int LED = 13; // The LED pin
 
 /*
-  The angle of the servo.
-  The running time = 0.5 + angle*0.5/45 (hours)
-*/
-int angle = 0;
+ The angle of the servo.
+ The running time = 0.5 + angle*0.5/45 (hours)
+ "i" is the counter in the main loop
+ */
+int angle = 0, i = 0;
 
 void moveServo()
 {
@@ -147,6 +152,7 @@ void onButtonClicked()
       angle += 45;
     else
       angle = 0;
+    draw(30*(angle/45)+30-i);
     moveServo();
     buttonCount = 10000;
   }
@@ -159,11 +165,8 @@ void onButtonClicked()
 void setup() {
   // Set up the screen
   setupScreen();
-  u8g.firstPage();  
-  do {
-    draw(0);
-  } while( u8g.nextPage() );
-  
+  draw(0);
+
   // Set up the pins
   pinMode(S, OUTPUT);
   pinMode(LED, OUTPUT);
@@ -184,10 +187,11 @@ void loop() {
   for (; angle >= 0; angle -= 45)
   {
     // Delay 0.5 hour
-    for (int i = 0; i < 30; i++)
+    for (i = 0; i < 30; i++)
     {
       for (int j = 0; j < 60; j++)
         delay(1000);
+      draw(30*(angle/45)+30-i);
       moveServo();
     }
   }
@@ -201,4 +205,7 @@ void loop() {
   sleep_mode();
   sleep_disable();
 }
+
+
+
 
