@@ -137,6 +137,7 @@ int Button = 2;  // The button
 int LED = 13; // The LED pin
 
 #define DEFAULT_TIME_LEFT 30
+#define TIME_INTERVAL 30
 unsigned int timeLeft = DEFAULT_TIME_LEFT;
 
 int buttonCount = 10000;  // The default number is a magic number
@@ -149,7 +150,7 @@ void onButtonClicked()
     delay(1000);
     digitalWrite(LED, LOW);
     if (timeLeft < 150)
-      timeLeft += 30;
+      timeLeft += TIME_INTERVAL;
     else
       timeLeft = DEFAULT_TIME_LEFT;
     draw(timeLeft);
