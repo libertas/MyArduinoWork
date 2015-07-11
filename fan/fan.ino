@@ -79,7 +79,7 @@ U8GLIB_NHD_C12864 u8g(4, 3, 7, 5, 6);	// SPI Com: SCK = 13, MOSI = 11, CS = 10, 
 //U8GLIB_SSD1351_128X128GH_HICOLOR u8g(8, 9, 7); // Arduino, HW SPI Com: SCK = 76, MOSI = 75, CS = 8, A0 = 9, RESET = 7 (Freetronics OLED)
 
 
-void draw(unsigned long time) {
+void draw(unsigned int time) {
   char stime[20];
   u8g.firstPage();
   do{
@@ -136,12 +136,8 @@ int S = 12;  // The output pin
 int Button = 2;  // The button
 int LED = 13; // The LED pin
 
-/*
- The angle of the servo.
- The running time = 0.5 + angle*0.5/45 (hours)
- "i" is the counter in the main loop
- */
-int angle = 0, i = 0;
+#define DEFAULT_TIME_LEFT 30
+unsigned int timeLeft = DEFAULT_TIME_LEFT;
 
 int buttonCount = 10000;  // The default number is a magic number
 
@@ -152,11 +148,11 @@ void onButtonClicked()
     digitalWrite(LED, HIGH);
     delay(1000);
     digitalWrite(LED, LOW);
-    if (angle < 180)
-      angle += 45;
+    if (timeLeft < 150)
+      timeLeft += 30;
     else
-      angle = 0;
-    draw(30*(angle/45)+30-i);
+      timeLeft = DEFAULT_TIME_LEFT;
+    draw(timeLeft);
     buttonCount = 10000;
   }
   else
@@ -167,12 +163,11 @@ void onButtonClicked()
 
 void setupFan() {
   // Set up the global variables
-  angle = 0;
-  i = 0;
-  
+  timeLeft = DEFAULT_TIME_LEFT;
+
   // Set up the screen
   setupScreen();
-  draw(30*(angle/45)+30-i);
+  draw(timeLeft);
 
   // Set up the pins
   pinMode(S, OUTPUT);
@@ -195,15 +190,12 @@ void loop() {
   // Start the fan
   digitalWrite(S, HIGH);
 
-  for (; angle >= 0; angle -= 45)
+  // Wait
+  for (; timeLeft > 0; timeLeft--)
   {
-    // Delay 0.5 hour
-    for (i = 0; i < 30; i++)
-    {
-      for (int j = 0; j < 60; j++)
-        delay(1000);
-      draw(30*(angle/45)+30-i);
-    }
+    for (int j = 0; j < 60; j++)
+      delay(1000);
+    draw(timeLeft);
   }
 
   // Stop the fan
@@ -216,8 +208,4 @@ void loop() {
   sleep_mode();
   sleep_disable();
 }
-
-
-
-
 
