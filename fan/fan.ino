@@ -80,11 +80,15 @@ U8GLIB_NHD_C12864 u8g(4, 3, 7, 5, 6);	// SPI Com: SCK = 13, MOSI = 11, CS = 10, 
 //U8GLIB_SSD1351_128X128GH_HICOLOR u8g(8, 9, 7); // Arduino, HW SPI Com: SCK = 76, MOSI = 75, CS = 8, A0 = 9, RESET = 7 (Freetronics OLED)
 
 
-void draw(void) {
+void draw(unsigned long time) {
+  char stime[20];
   // graphic commands to redraw the complete screen should be placed here  
   u8g.setFont(u8g_font_unifont);
   //u8g.setFont(u8g_font_osb21);
-  u8g.drawStr( 0, 10, "Hello World!");
+  u8g.drawStr( 0, 10, "Welcome to use!");
+  u8g.drawStr( 0, 25, "Time left:");
+  sprintf(stime, "%ld", time);
+  u8g.drawStr( 0, 40, stime);
 }
 
 void setupScreen(void) {
@@ -157,7 +161,7 @@ void setup() {
   setupScreen();
   u8g.firstPage();  
   do {
-    draw();
+    draw(0);
   } while( u8g.nextPage() );
   
   // Set up the pins
