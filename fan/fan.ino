@@ -88,7 +88,7 @@ void draw(unsigned int time) {
     //u8g.setFont(u8g_font_osb21);
     u8g.drawStr( 0, 10, "Welcome to use!");
     u8g.drawStr( 0, 25, "Time left:");
-    sprintf(stime, "%ld minutes.", time);
+    sprintf(stime, "%d minutes.", time);
     u8g.drawStr( 0, 40, stime);
   } 
   while(u8g.nextPage());
