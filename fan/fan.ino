@@ -1,6 +1,5 @@
 #include <avr/power.h>
 #include <avr/sleep.h>
-#include <Servo.h>
 
 
 #include "U8glib.h"
@@ -133,12 +132,8 @@ void setupScreen(void) {
   }
 }
 
-
-Servo myServo;
-
 int S = 12;  // The output pin
 int Button = 2;  // The button
-int ServoPin = 9;  // The servo
 int LED = 13; // The LED pin
 
 /*
@@ -147,12 +142,6 @@ int LED = 13; // The LED pin
  "i" is the counter in the main loop
  */
 int angle = 0, i = 0;
-
-void moveServo()
-{
-  myServo.write(angle);
-  delay(15);
-}
 
 int buttonCount = 10000;  // The default number is a magic number
 
@@ -168,7 +157,6 @@ void onButtonClicked()
     else
       angle = 0;
     draw(30*(angle/45)+30-i);
-    moveServo();
     buttonCount = 10000;
   }
   else
@@ -189,10 +177,6 @@ void setupFan() {
   // Set up the pins
   pinMode(S, OUTPUT);
   pinMode(LED, OUTPUT);
-
-  // Init the servo
-  myServo.attach(ServoPin);
-  moveServo();
 
   // Set up the button
   pinMode(Button, INPUT_PULLUP);
@@ -219,7 +203,6 @@ void loop() {
       for (int j = 0; j < 60; j++)
         delay(1000);
       draw(30*(angle/45)+30-i);
-      moveServo();
     }
   }
 
