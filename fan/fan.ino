@@ -97,6 +97,7 @@ void draw(unsigned long time) {
 
 void drawShutdown()
 {
+  u8g.firstPage(); 
   do{
     // graphic commands to redraw the complete screen should be placed here  
     u8g.setFont(u8g_font_unifont);
@@ -176,7 +177,7 @@ void onButtonClicked()
   }
 }
 
-void setup() {
+void setupFan() {
   // Set up the screen
   setupScreen();
   draw(30*(angle/45)+30-i);
@@ -194,7 +195,15 @@ void setup() {
   attachInterrupt(0, onButtonClicked, LOW);
 }
 
+
+void setup()
+{
+}
+
 void loop() {
+  // Set up the fan
+  setupFan();
+
   // Start the fan
   digitalWrite(S, HIGH);
 
@@ -220,6 +229,7 @@ void loop() {
   sleep_mode();
   sleep_disable();
 }
+
 
 
 
