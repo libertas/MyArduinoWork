@@ -178,6 +178,10 @@ void onButtonClicked()
 }
 
 void setupFan() {
+  // Set up the global variables
+  angle = 0;
+  i = 0;
+  
   // Set up the screen
   setupScreen();
   draw(30*(angle/45)+30-i);
