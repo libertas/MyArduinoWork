@@ -165,7 +165,7 @@ void onButtonClicked()
 void setup() {
   // Set up the screen
   setupScreen();
-  draw(0);
+  draw(30*(angle/45)+30-i);
 
   // Set up the pins
   pinMode(S, OUTPUT);
