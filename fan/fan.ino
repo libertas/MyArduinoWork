@@ -95,6 +95,20 @@ void draw(unsigned long time) {
   while(u8g.nextPage());
 }
 
+void drawShutdown()
+{
+  do{
+    // graphic commands to redraw the complete screen should be placed here  
+    u8g.setFont(u8g_font_unifont);
+    //u8g.setFont(u8g_font_osb21);
+    u8g.drawStr( 0, 10, "POWEROFF!");
+    u8g.drawStr( 0, 25, "Press");
+    u8g.drawStr( 0, 40, "the button");
+    u8g.drawStr( 0, 55, "to start.");
+  }
+  while(u8g.nextPage());
+}
+
 void setupScreen(void) {
 
   // flip screen, if required
@@ -200,6 +214,7 @@ void loop() {
   digitalWrite(S, LOW);
 
   // Stop forever
+  drawShutdown();
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
   sleep_enable();
   sleep_mode();
