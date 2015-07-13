@@ -204,7 +204,7 @@ void loop() {
   digitalWrite(S, HIGH);
 
   // Wait
-  for (; timeLeft > 0; timeLeft--)
+  while(timeLeft > 0)
   {
     for (int j = 0; j < 60; j++)
       delay(1000);
@@ -213,6 +213,7 @@ void loop() {
       stateSLED = HIGH;
       digitalWrite(SLED, stateSLED); // Turn off the screen
     }
+    timeLeft--
     draw(timeLeft);
   }
 
