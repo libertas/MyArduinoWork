@@ -136,6 +136,7 @@ int S = 12;  // The output pin
 int Button = 2;  // The button
 int LED = 13;  // The LED pin
 int SLED = 8;  // The LED pin of the screen
+int stateSLED = LOW;
 
 #define DEFAULT_TIME_LEFT 30
 #define TIME_INTERVAL 30
@@ -147,16 +148,23 @@ void onButtonClicked()
 {
   if (buttonCount < 10000)
   {
-    digitalWrite(LED, HIGH);
-    delay(1000);
-    digitalWrite(LED, LOW);
-    if (timeLeft < 150)
-      timeLeft += TIME_INTERVAL;
+    if(stateSLED == LOW)
+    {
+      digitalWrite(LED, HIGH);
+      delay(1000);
+      digitalWrite(LED, LOW);
+      if (timeLeft < 150)
+        timeLeft += TIME_INTERVAL;
+      else
+        timeLeft = DEFAULT_TIME_LEFT;
+      draw(timeLeft);
+      buttonCount = 10000;
+    }
     else
-      timeLeft = DEFAULT_TIME_LEFT;
-    draw(timeLeft);
-    buttonCount = 10000;
-    digitalWrite(SLED, LOW);  // Turn on the screen
+    {
+      stateSLED = LOW;
+      digitalWrite(SLED, stateSLED);  // Turn on the screen
+    }
   }
   else
   {
@@ -180,6 +188,7 @@ void setup()
   pinMode(S, OUTPUT);
   pinMode(LED, OUTPUT);
   pinMode(SLED, OUTPUT);
+  digitalWrite(SLED, stateSLED);
 
   // Set up the button
   pinMode(Button, INPUT_PULLUP);
@@ -198,7 +207,11 @@ void loop() {
   {
     for (int j = 0; j < 60; j++)
       delay(1000);
-    digitalWrite(SLED, HIGH); // Turn off the screen
+    if(stateSLED == LOW)
+    {
+      stateSLED = HIGH;
+      digitalWrite(SLED, stateSLED); // Turn off the screen
+    }
     draw(timeLeft);
   }
 
@@ -212,4 +225,7 @@ void loop() {
   sleep_mode();
   sleep_disable();
 }
+
+
+
 
