@@ -134,7 +134,8 @@ void setupScreen(void) {
 
 int S = 12;  // The output pin
 int Button = 2;  // The button
-int LED = 13; // The LED pin
+int LED = 13;  // The LED pin
+int SLED = 8;  // The LED pin of the screen
 
 #define DEFAULT_TIME_LEFT 30
 #define TIME_INTERVAL 30
@@ -155,6 +156,7 @@ void onButtonClicked()
       timeLeft = DEFAULT_TIME_LEFT;
     draw(timeLeft);
     buttonCount = 10000;
+    digitalWrite(SLED, HIGH);
   }
   else
   {
@@ -177,6 +179,7 @@ void setup()
   // Set up the pins
   pinMode(S, OUTPUT);
   pinMode(LED, OUTPUT);
+  pinMode(SLED, OUTPUT);
 
   // Set up the button
   pinMode(Button, INPUT_PULLUP);
@@ -195,6 +198,7 @@ void loop() {
   {
     for (int j = 0; j < 60; j++)
       delay(1000);
+    digitalWrite(SLED, LOW);
     draw(timeLeft);
   }
 
