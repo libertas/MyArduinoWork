@@ -177,6 +177,7 @@ void initVariables() {
   // Set up the global variables
   timeLeft = DEFAULT_TIME_LEFT;
   stateSLED = LOW;
+  digitalWrite(SLED, stateSLED);
 
   // Set up the screen
   setupScreen();
@@ -190,7 +191,6 @@ void setup()
   pinMode(S, OUTPUT);
   pinMode(LED, OUTPUT);
   pinMode(SLED, OUTPUT);
-  digitalWrite(SLED, stateSLED);
 
   // Set up the button
   pinMode(Button, INPUT_PULLUP);
