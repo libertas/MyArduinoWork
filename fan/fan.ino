@@ -176,6 +176,7 @@ void onButtonClicked()
 void initVariables() {
   // Set up the global variables
   timeLeft = DEFAULT_TIME_LEFT;
+  stateSLED = LOW;
 
   // Set up the screen
   setupScreen();
