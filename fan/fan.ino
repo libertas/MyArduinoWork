@@ -162,14 +162,18 @@ void onButtonClicked()
   }
 }
 
-void setupFan() {
+void initVariables() {
   // Set up the global variables
   timeLeft = DEFAULT_TIME_LEFT;
 
   // Set up the screen
   setupScreen();
   draw(timeLeft);
+}
 
+
+void setup()
+{
   // Set up the pins
   pinMode(S, OUTPUT);
   pinMode(LED, OUTPUT);
@@ -179,14 +183,9 @@ void setupFan() {
   attachInterrupt(0, onButtonClicked, LOW);
 }
 
-
-void setup()
-{
-}
-
 void loop() {
   // Set up the fan
-  setupFan();
+  initVariables();
 
   // Start the fan
   digitalWrite(S, HIGH);
