@@ -156,7 +156,7 @@ void onButtonClicked()
       timeLeft = DEFAULT_TIME_LEFT;
     draw(timeLeft);
     buttonCount = 10000;
-    digitalWrite(SLED, HIGH);
+    digitalWrite(SLED, LOW);  // Turn on the screen
   }
   else
   {
@@ -198,7 +198,7 @@ void loop() {
   {
     for (int j = 0; j < 60; j++)
       delay(1000);
-    digitalWrite(SLED, LOW);
+    digitalWrite(SLED, HIGH); // Turn off the screen
     draw(timeLeft);
   }
 
