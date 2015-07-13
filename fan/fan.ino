@@ -213,7 +213,7 @@ void loop() {
       stateSLED = HIGH;
       digitalWrite(SLED, stateSLED); // Turn off the screen
     }
-    timeLeft--
+    timeLeft--;
     draw(timeLeft);
   }
 
