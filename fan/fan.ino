@@ -148,10 +148,15 @@ unsigned int timeLeft = DEFAULT_TIME_LEFT;
 #define MAGIC_BUTTON_COUNT 10000
 int buttonCount = MAGIC_BUTTON_COUNT;  // The default number is a magic number
 
+void setup();
+
 void onButtonClicked()
 {
   if(sleeped)
+  {
+    setup();
     resetAll();
+  }
   else
   {
     if (buttonCount < MAGIC_BUTTON_COUNT)
