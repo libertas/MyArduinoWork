@@ -139,6 +139,7 @@ int Button = 2;  // The button
 int LED = 13;  // The LED pin
 int SLED = 8;  // The LED pin of the screen
 int stateSLED = LOW;
+int sleeped = 0;
 
 #define DEFAULT_TIME_LEFT 30
 #define TIME_INTERVAL 30
@@ -149,29 +150,34 @@ int buttonCount = MAGIC_BUTTON_COUNT;  // The default number is a magic number
 
 void onButtonClicked()
 {
-  if (buttonCount < MAGIC_BUTTON_COUNT)
+  if(sleeped)
+    resetAll();
+  else
   {
-    if(stateSLED == LOW)
+    if (buttonCount < MAGIC_BUTTON_COUNT)
     {
-      digitalWrite(LED, HIGH);
-      delay(1000);
-      digitalWrite(LED, LOW);
-      if (timeLeft < 150)
-        timeLeft += TIME_INTERVAL;
+      if(stateSLED == LOW)
+      {
+        digitalWrite(LED, HIGH);
+        delay(1000);
+        digitalWrite(LED, LOW);
+        if (timeLeft < 150)
+          timeLeft += TIME_INTERVAL;
+        else
+          timeLeft = DEFAULT_TIME_LEFT;
+        draw(timeLeft);
+      }
       else
-        timeLeft = DEFAULT_TIME_LEFT;
-      draw(timeLeft);
+      {
+        stateSLED = LOW;
+        digitalWrite(SLED, stateSLED);  // Turn on the screen
+      }
+      buttonCount = MAGIC_BUTTON_COUNT;  // Reset the buttonCount
     }
     else
     {
-      stateSLED = LOW;
-      digitalWrite(SLED, stateSLED);  // Turn on the screen
+      buttonCount++;
     }
-    buttonCount = MAGIC_BUTTON_COUNT;  // Reset the buttonCount
-  }
-  else
-  {
-    buttonCount++;
   }
 }
 
@@ -187,6 +193,7 @@ void setup()
   attachInterrupt(0, onButtonClicked, LOW);
 
   // Set up the global variables
+  sleeped = 0;
   timeLeft = DEFAULT_TIME_LEFT;
   stateSLED = LOW;
   digitalWrite(SLED, stateSLED);
@@ -220,12 +227,13 @@ void loop()
 
   // Stop forever
   drawShutdown();
+  sleeped = 1;
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
   sleep_enable();
   sleep_mode();
   sleep_disable();
-  resetAll();
 }
+
 
 
 
