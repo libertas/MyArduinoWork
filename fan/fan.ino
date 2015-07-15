@@ -1,8 +1,9 @@
 #include <avr/power.h>
 #include <avr/sleep.h>
 
-
 #include "U8glib.h"
+
+void(* resetAll) (void) = 0;
 
 // setup u8g object, please remove comment from one of the following constructor calls
 // IMPORTANT NOTE: The following list is incomplete. The complete list of supported 
@@ -79,7 +80,8 @@ U8GLIB_NHD_C12864 u8g(4, 3, 7, 5, 6);	// SPI Com: SCK = 4, MOSI = 3, CS = 7, A0 
 //U8GLIB_SSD1351_128X128GH_HICOLOR u8g(8, 9, 7); // Arduino, HW SPI Com: SCK = 76, MOSI = 75, CS = 8, A0 = 9, RESET = 7 (Freetronics OLED)
 
 
-void draw(unsigned int time) {
+void draw(unsigned int time)
+{
   char stime[20];
   u8g.firstPage();
   do{
@@ -109,7 +111,8 @@ void drawShutdown()
   while(u8g.nextPage());
 }
 
-void setupScreen(void) {
+void setupScreen(void)
+{
 
   // rotate screen, if required
   u8g.setRot180();
@@ -173,18 +176,6 @@ void onButtonClicked()
   }
 }
 
-void initVariables() {
-  // Set up the global variables
-  timeLeft = DEFAULT_TIME_LEFT;
-  stateSLED = LOW;
-  digitalWrite(SLED, stateSLED);
-
-  // Set up the screen
-  setupScreen();
-  draw(timeLeft);
-}
-
-
 void setup()
 {
   // Set up the pins
@@ -195,12 +186,19 @@ void setup()
   // Set up the button
   pinMode(Button, INPUT_PULLUP);
   attachInterrupt(0, onButtonClicked, LOW);
+
+  // Set up the global variables
+  timeLeft = DEFAULT_TIME_LEFT;
+  stateSLED = LOW;
+  digitalWrite(SLED, stateSLED);
+
+  // Set up the screen
+  setupScreen();
+  draw(timeLeft);
 }
 
-void loop() {
-  // Set up the fan
-  initVariables();
-
+void loop()
+{
   // Start the fan
   digitalWrite(S, HIGH);
 
@@ -227,7 +225,9 @@ void loop() {
   sleep_enable();
   sleep_mode();
   sleep_disable();
+  resetAll();
 }
+
 
 
 
