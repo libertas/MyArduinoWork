@@ -1,4 +1,3 @@
-#include <avr/power.h>
 #include <avr/sleep.h>
 
 #include "U8glib.h"
