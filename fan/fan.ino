@@ -134,10 +134,10 @@ void setupScreen(void)
   }
 }
 
-#define S 12;  // The output pin
-#define Button 2;  // The button
-#define LED 13;  // The LED pin
-#define SLED 8;  // The LED pin of the screen
+#define S 12  // The output pin
+#define Button 2  // The button
+#define LED 13  // The LED pin
+#define SLED 8  // The LED pin of the screen
 int stateSLED = LOW;
 int sleeped = 0;
 
@@ -200,10 +200,12 @@ void setup()
   // Set up the global variables
   sleeped = 0;
   timeLeft = DEFAULT_TIME_LEFT;
+  buttonCount = MAGIC_BUTTON_COUNT; 
   stateSLED = LOW;
   digitalWrite(SLED, stateSLED);
 
   // Set up the screen
+  U8GLIB_NHD_C12864 u8g(4, 3, 7, 5, 6);
   setupScreen();
   draw(timeLeft);
 }
