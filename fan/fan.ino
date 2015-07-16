@@ -198,6 +198,7 @@ void setup()
   attachInterrupt(0, onButtonClicked, LOW);
 
   // Set up the global variables
+  resetAll = 0;
   sleeped = 0;
   timeLeft = DEFAULT_TIME_LEFT;
   buttonCount = MAGIC_BUTTON_COUNT; 
@@ -205,7 +206,7 @@ void setup()
   digitalWrite(SLED, stateSLED);
 
   // Set up the screen
-  U8GLIB_NHD_C12864 u8g(4, 3, 7, 5, 6);
+  u8g = *(new U8GLIB_NHD_C12864(4, 3, 7, 5, 6));
   setupScreen();
   draw(timeLeft);
 }
@@ -239,6 +240,8 @@ void loop()
   sleep_enable();
   sleep_mode();
   sleep_disable();
+  setup();
+  resetAll();
 }
 
 
