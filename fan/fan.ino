@@ -134,10 +134,10 @@ void setupScreen(void)
   }
 }
 
-int S = 12;  // The output pin
-int Button = 2;  // The button
-int LED = 13;  // The LED pin
-int SLED = 8;  // The LED pin of the screen
+#define S 12;  // The output pin
+#define Button 2;  // The button
+#define LED 13;  // The LED pin
+#define SLED 8;  // The LED pin of the screen
 int stateSLED = LOW;
 int sleeped = 0;
 
