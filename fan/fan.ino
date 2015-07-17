@@ -2,8 +2,6 @@
 
 #include "U8glib.h"
 
-void(* resetAll) (void) = 0;
-
 // setup u8g object, please remove comment from one of the following constructor calls
 // IMPORTANT NOTE: The following list is incomplete. The complete list of supported 
 // devices with all constructor calls is here: http://code.google.com/p/u8glib/wiki/device
@@ -148,14 +146,13 @@ unsigned int timeLeft = DEFAULT_TIME_LEFT;
 #define MAGIC_BUTTON_COUNT 10000
 int buttonCount = MAGIC_BUTTON_COUNT;  // The default number is a magic number
 
-void setup();
+#define RESETALL() do{asm volatile ("jmp 0");}while(1)
 
 void onButtonClicked()
 {
   if(sleeped)
   {
-    setup();
-    resetAll();
+    RESETALL();
   }
   else
   {
@@ -198,7 +195,6 @@ void setup()
   attachInterrupt(0, onButtonClicked, LOW);
 
   // Set up the global variables
-  resetAll = 0;
   sleeped = 0;
   timeLeft = DEFAULT_TIME_LEFT;
   buttonCount = MAGIC_BUTTON_COUNT; 
@@ -240,8 +236,6 @@ void loop()
   sleep_enable();
   sleep_mode();
   sleep_disable();
-  setup();
-  resetAll();
 }
 
 
