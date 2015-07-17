@@ -148,7 +148,7 @@ unsigned int timeLeft = DEFAULT_TIME_LEFT;
 #define MAGIC_BUTTON_COUNT 10000
 int buttonCount = MAGIC_BUTTON_COUNT;  // The default number is a magic number
 
-#define RESETALL() wdt_enable(WDTO_15MS)
+#define RESETALL() do{wdt_enable(WDTO_15MS); while(1){} } while(0)
 
 void onButtonClicked()
 {
