@@ -194,17 +194,10 @@ void setup()
   pinMode(Button, INPUT_PULLUP);
   attachInterrupt(0, onButtonClicked, LOW);
 
-  // Set up the global variables
-  sleeped = 0;
-  timeLeft = DEFAULT_TIME_LEFT;
-  buttonCount = MAGIC_BUTTON_COUNT; 
-  stateSLED = LOW;
-  digitalWrite(SLED, stateSLED);
-
   // Set up the screen
-  u8g = *(new U8GLIB_NHD_C12864(4, 3, 7, 5, 6));
   setupScreen();
   draw(timeLeft);
+  digitalWrite(SLED, stateSLED);
 }
 
 void loop()
