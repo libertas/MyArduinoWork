@@ -1,4 +1,5 @@
 #include <avr/sleep.h>
+#include <avr/wdt.h>
 
 #include "U8glib.h"
 
@@ -146,7 +147,7 @@ unsigned int timeLeft = DEFAULT_TIME_LEFT;
 #define MAGIC_BUTTON_COUNT 10000
 int buttonCount = MAGIC_BUTTON_COUNT;  // The default number is a magic number
 
-#define RESETALL() do{asm volatile ("jmp 0");}while(1)
+#define RESETALL() wdt_enable(WDTO_15MS)
 
 void onButtonClicked()
 {
