@@ -142,6 +142,7 @@ int sleeped = 0;
 
 #define DEFAULT_TIME_LEFT 30
 #define TIME_INTERVAL 30
+#define MAX_TIME 180
 unsigned int timeLeft = DEFAULT_TIME_LEFT;
 
 #define MAGIC_BUTTON_COUNT 10000
@@ -164,10 +165,9 @@ void onButtonClicked()
         digitalWrite(LED, HIGH);
         delay(1000);
         digitalWrite(LED, LOW);
-        if (timeLeft < 150)
-          timeLeft += TIME_INTERVAL;
-        else
-          timeLeft = DEFAULT_TIME_LEFT;
+        timeLeft += TIME_INTERVAL;
+        if(timeLeft > MAX_TIME)
+          timeLeft -= MAX_TIME;
         draw(timeLeft);
       }
       else
