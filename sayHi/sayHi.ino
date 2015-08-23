@@ -4,6 +4,14 @@
 int in = 3, out = 4;
 int state = LOW;
 
+void sleep()
+{
+  set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+  sleep_enable();
+  sleep_mode();
+  sleep_disable();
+}
+
 void setup()
 {
   pinMode(in, INPUT);
@@ -18,9 +26,9 @@ void loop()
     state = !state;
     digitalWrite(out, state);
     wdt_enable(WDTO_8S);
-    set_sleep_mode(SLEEP_MODE_PWR_DOWN);
-    sleep_enable();
-    sleep_mode();
-    sleep_disable();
+    sleep();
+    
   }
+  wdt_enable(WDTO_15MS);
+  sleep();
 }
