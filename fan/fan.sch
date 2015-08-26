@@ -2182,8 +2182,12 @@ naming: grid - package width</description>
 <text x="68.58" y="83.82" size="1.778" layer="91">SDA</text>
 <text x="68.58" y="86.36" size="1.778" layer="91">SCL</text>
 <text x="149.86" y="88.9" size="1.778" layer="95">Fan</text>
-<text x="88.9" y="45.72" size="1.778" layer="95">Servo</text>
 <text x="104.14" y="17.78" size="1.778" layer="95">Button</text>
+<text x="104.14" y="20.32" size="1.778" layer="91">MOSI</text>
+<text x="104.14" y="22.86" size="1.778" layer="91">SCK</text>
+<text x="104.14" y="25.4" size="1.778" layer="91">A0</text>
+<text x="104.14" y="27.94" size="1.778" layer="91">RST</text>
+<text x="104.14" y="30.48" size="1.778" layer="91">CS</text>
 </plain>
 <instances>
 <instance part="IOL" gate="A" x="66.04" y="22.86" rot="MR180"/>
@@ -2371,6 +2375,8 @@ naming: grid - package width</description>
 <wire x1="45.72" y1="22.86" x2="45.72" y2="20.32" width="0.1524" layer="91"/>
 <wire x1="45.72" y1="20.32" x2="63.5" y2="20.32" width="0.1524" layer="91"/>
 <pinref part="IOL" gate="A" pin="4"/>
+<wire x1="63.5" y1="20.32" x2="104.14" y2="20.32" width="0.1524" layer="91"/>
+<junction x="63.5" y="20.32"/>
 </segment>
 </net>
 <net name="IO4" class="0">
@@ -2379,6 +2385,8 @@ naming: grid - package width</description>
 <wire x1="48.26" y1="22.86" x2="48.26" y2="25.4" width="0.1524" layer="91"/>
 <wire x1="48.26" y1="25.4" x2="17.78" y2="25.4" width="0.1524" layer="91"/>
 <pinref part="IOL" gate="A" pin="5"/>
+<wire x1="63.5" y1="22.86" x2="104.14" y2="22.86" width="0.1524" layer="91"/>
+<junction x="63.5" y="22.86"/>
 </segment>
 </net>
 <net name="IO5" class="0">
@@ -2387,6 +2395,8 @@ naming: grid - package width</description>
 <wire x1="50.8" y1="27.94" x2="50.8" y2="25.4" width="0.1524" layer="91"/>
 <wire x1="50.8" y1="25.4" x2="63.5" y2="25.4" width="0.1524" layer="91"/>
 <pinref part="IOL" gate="A" pin="6"/>
+<wire x1="63.5" y1="25.4" x2="104.14" y2="25.4" width="0.1524" layer="91"/>
+<junction x="63.5" y="25.4"/>
 </segment>
 </net>
 <net name="IO6" class="0">
@@ -2395,6 +2405,8 @@ naming: grid - package width</description>
 <wire x1="53.34" y1="27.94" x2="53.34" y2="30.48" width="0.1524" layer="91"/>
 <wire x1="53.34" y1="30.48" x2="17.78" y2="30.48" width="0.1524" layer="91"/>
 <pinref part="IOL" gate="A" pin="7"/>
+<wire x1="63.5" y1="27.94" x2="104.14" y2="27.94" width="0.1524" layer="91"/>
+<junction x="63.5" y="27.94"/>
 </segment>
 </net>
 <net name="IO7" class="0">
@@ -2403,6 +2415,8 @@ naming: grid - package width</description>
 <wire x1="55.88" y1="33.02" x2="55.88" y2="30.48" width="0.1524" layer="91"/>
 <wire x1="55.88" y1="30.48" x2="63.5" y2="30.48" width="0.1524" layer="91"/>
 <pinref part="IOL" gate="A" pin="8"/>
+<wire x1="63.5" y1="30.48" x2="104.14" y2="30.48" width="0.1524" layer="91"/>
+<junction x="63.5" y="30.48"/>
 </segment>
 </net>
 <net name="IO8" class="0">
@@ -2419,9 +2433,6 @@ naming: grid - package width</description>
 <wire x1="53.34" y1="66.04" x2="53.34" y2="58.42" width="0.1524" layer="91"/>
 <wire x1="53.34" y1="58.42" x2="17.78" y2="58.42" width="0.1524" layer="91"/>
 <pinref part="IOH" gate="A" pin="2"/>
-<wire x1="63.5" y1="66.04" x2="88.9" y2="66.04" width="0.1524" layer="91"/>
-<wire x1="88.9" y1="66.04" x2="88.9" y2="45.72" width="0.1524" layer="91"/>
-<junction x="63.5" y="66.04"/>
 </segment>
 </net>
 <net name="N$1" class="0">
