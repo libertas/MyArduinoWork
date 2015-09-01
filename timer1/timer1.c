@@ -4,6 +4,10 @@
 ISR(TIMER1_OVF_vect)
 {
     static unsigned int t;
+
+    TCNT1H = (65536-F_CPU/1000)%256;
+    TCNT1L = (65536-F_CPU/1000)%256;
+
     t++;
     if(t == F_CPU/65536)
     {
@@ -15,8 +19,8 @@ ISR(TIMER1_OVF_vect)
 
 void setupTimer1()
 {
-    TCNT1H = 0;
-    TCNT1L = 0;
+    TCNT1H = (65536-F_CPU/1000)%256;
+    TCNT1L = (65536-F_CPU/1000)%256;
     TCCR1A = 0;
     TCCR1B = 0x01;
     // Atmega 48V
