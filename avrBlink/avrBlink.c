@@ -31,6 +31,8 @@ int main()
     DDRC = 0xff;
     DDRD = 0xff;
 
+    setupTimer1();
+
     while(1)
     {
         
