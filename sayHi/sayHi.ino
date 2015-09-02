@@ -26,16 +26,18 @@ void setup()
 
 void loop()
 {
-  if(digitalRead(in2))
+  if(digitalRead(in1))
   {
-    digitalWrite(out2, HIGH);
+    digitalWrite(out1, HIGH);
+    delay(200000);
     wdt_enable(WDTO_8S);
     sleep();
   }
 
-  if(digitalRead(in1))
+  if(digitalRead(in2))
   {
-    digitalWrite(out1, HIGH);
+    digitalWrite(out2, HIGH);
+    delay(200000);
     wdt_enable(WDTO_8S);
     sleep();
   }
