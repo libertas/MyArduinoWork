@@ -1,8 +1,7 @@
 // Detect a human and say hi to him using Attiny 13a
 #include <avr/wdt.h>
 #include <avr/sleep.h>
-int in = 3, out = 4;
-int state = LOW;
+int in1 = 3, out1 = 4;
 
 void sleep()
 {
@@ -14,17 +13,16 @@ void sleep()
 
 void setup()
 {
-  pinMode(in, INPUT);
-  pinMode(out, OUTPUT);
-  digitalWrite(out, state);
+  pinMode(in1, INPUT);
+  pinMode(out1, OUTPUT);
+  digitalWrite(out1, LOW);
 }
 
 void loop()
 {
-  if(digitalRead(in))
+  if(digitalRead(in1))
   {
-    state = !state;
-    digitalWrite(out, state);
+    digitalWrite(out1, HIGH);
     wdt_enable(WDTO_8S);
     sleep();
     
