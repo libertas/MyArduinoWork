@@ -40,10 +40,6 @@ void play()
 
 int main()
 {
-	DDRC = 0xff;
-	PORTC = 0xff;
-	DDRD = 0xff;
-	PORTD = 0xff;
 	DDRB = 0xfe;
 	while (1) {
 		if (!(PINB & 0x01))
