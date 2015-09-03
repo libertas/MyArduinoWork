@@ -46,7 +46,7 @@ void loop()
     sleep();
   }
 
-  wdt_enable(WDTO_15MS);
+  wdt_enable(WDTO_500MS);
   sleep();
 }
 
