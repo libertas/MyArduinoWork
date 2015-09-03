@@ -14,8 +14,7 @@ void sleep()
 
 void setup()
 {
-  wdt_disable();
-  sleep_disable();
+  wdt_enable(WDTO_8S);
 
   pinMode(0, OUTPUT);
   digitalWrite(0, LOW);
@@ -34,15 +33,19 @@ void loop()
 {
   if(digitalRead(in1))
   {
+    wdt_reset();
+    while(!digitalRead(in2));
+    wdt_reset();
     digitalWrite(out1, HIGH);
-    wdt_enable(WDTO_8S);
     sleep();
   }
 
   if(digitalRead(in2))
   {
+    wdt_reset();
+    while(!digitalRead(in1));
+    wdt_reset();
     digitalWrite(out2, HIGH);
-    wdt_enable(WDTO_8S);
     sleep();
   }
 
