@@ -3,8 +3,7 @@
 #include <avr/sleep.h>
 #include <util/delay.h>
 
-/* Use PORTC and PORTD as ports of leds
- * Use PORTB0 as input pin
+/* Use PORTB0 as input pin
  * Use PORTB1 as output pin
  */
 
