@@ -39,6 +39,7 @@ void loop()
     digitalWrite(left2, LOW);
     digitalWrite(right1, HIGH);
     digitalWrite(right2, LOW);
+    errorCount = 0;
     lastCode = irCode;
     break;
   case goBack:
@@ -46,6 +47,7 @@ void loop()
     digitalWrite(left2, HIGH);
     digitalWrite(right1, LOW);
     digitalWrite(right2, HIGH);
+    errorCount = 0;
     lastCode = irCode;
     break;
   case turnLeft:
@@ -53,6 +55,7 @@ void loop()
     digitalWrite(left2, LOW);
     digitalWrite(right1, HIGH);
     digitalWrite(right2, LOW);
+    errorCount = 0;
     lastCode = irCode;
     break;
   case turnRight:
@@ -60,15 +63,17 @@ void loop()
     digitalWrite(left2, LOW);
     digitalWrite(right1, LOW);
     digitalWrite(right2, LOW);
+    errorCount = 0;
     lastCode = irCode;
     break;
   default:
     errorCount++;
-    if(errorCount < 10)
+    if(errorCount < 5)
     {
       break;
     }
     errorCount = 0;
+    lastCode = 0;
   case stopAll:
     digitalWrite(left1, LOW);
     digitalWrite(left2, LOW);
@@ -77,6 +82,6 @@ void loop()
     break;
   }
 
-  delay(100);
+  delay(50);
 }
 
