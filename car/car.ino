@@ -7,7 +7,7 @@ IRrecv irrecv(RECV_PIN);
 decode_results results;
 
 const int left1 = 5, left2 = 6, right1 = 7, right2 = 8;
-const unsigned long goForward = 0xFF18E7, goBack = 0xFF4AB5, turnLeft = 0xFF10EF, turnRight = 0xFF5AA5, stopAll = 0xFF38C7;
+const unsigned long goForward = 0xFF18E7, goBack = 0xFF4AB5, turnLeft = 0xFF10EF, turnRight = 0xFF5AA5, stopAll = 0xFF38C7;
 
 void setup()
 {
@@ -25,45 +25,43 @@ void loop()
     irrecv.resume(); // Receive the next value
   }
 
-  if(irCode == 0xffffffff)
-    irCode = lastCode;
-  else
-    lastCode = irCode;
-
-  switch(irCode)
+  if(irCode != lastCode)
   {
-  case goForward:
-    digitalWrite(left1, HIGH);
-    digitalWrite(left2, LOW);
-    digitalWrite(right1, HIGH);
-    digitalWrite(right2, LOW);
-    break;
-  case goBack:
-    digitalWrite(left1, LOW);
-    digitalWrite(left2, HIGH);
-    digitalWrite(right1, LOW);
-    digitalWrite(right2, HIGH);
-    break;
-  case turnLeft:
-    digitalWrite(left1, LOW);
-    digitalWrite(left2, LOW);
-    digitalWrite(right1, HIGH);
-    digitalWrite(right2, LOW);
-    break;
-  case turnRight:
-    digitalWrite(left1, HIGH);
-    digitalWrite(left2, LOW);
-    digitalWrite(right1, LOW);
-    digitalWrite(right2, LOW);
-    break;
-  case stopAll:
-  default:
-    digitalWrite(left1, LOW);
-    digitalWrite(left2, LOW);
-    digitalWrite(right1, LOW);
-    digitalWrite(right2, LOW);
-    break;
+    switch(irCode)
+    {
+    case goForward:
+      digitalWrite(left1, HIGH);
+      digitalWrite(left2, LOW);
+      digitalWrite(right1, HIGH);
+      digitalWrite(right2, LOW);
+      break;
+    case goBack:
+      digitalWrite(left1, LOW);
+      digitalWrite(left2, HIGH);
+      digitalWrite(right1, LOW);
+      digitalWrite(right2, HIGH);
+      break;
+    case turnLeft:
+      digitalWrite(left1, LOW);
+      digitalWrite(left2, LOW);
+      digitalWrite(right1, HIGH);
+      digitalWrite(right2, LOW);
+      break;
+    case turnRight:
+      digitalWrite(left1, HIGH);
+      digitalWrite(left2, LOW);
+      digitalWrite(right1, LOW);
+      digitalWrite(right2, LOW);
+      break;
+    case stopAll:
+      digitalWrite(left1, LOW);
+      digitalWrite(left2, LOW);
+      digitalWrite(right1, LOW);
+      digitalWrite(right2, LOW);
+      break;
+    }
   }
   delay(100);
 }
+
 
