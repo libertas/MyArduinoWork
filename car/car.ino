@@ -17,7 +17,9 @@ void setup()
 
 void loop()
 {
-  unsigned long irCode = 0, lastCode = 0;
+  unsigned long irCode = 0;
+  static unsigned long lastCode;
+  static unsigned char errorCount;
   if (irrecv.decode(&results))
   {
     irCode = results.value;
@@ -25,47 +27,56 @@ void loop()
     irrecv.resume(); // Receive the next value
   }
 
-  if(irCode != lastCode)
+  if(irCode == 0xffffffff)
   {
-    lastCode = irCode;
+    irCode = lastCode;
+  }
 
-    switch(irCode)
+  switch(irCode)
+  {
+  case goForward:
+    digitalWrite(left1, HIGH);
+    digitalWrite(left2, LOW);
+    digitalWrite(right1, HIGH);
+    digitalWrite(right2, LOW);
+    lastCode = irCode;
+    break;
+  case goBack:
+    digitalWrite(left1, LOW);
+    digitalWrite(left2, HIGH);
+    digitalWrite(right1, LOW);
+    digitalWrite(right2, HIGH);
+    lastCode = irCode;
+    break;
+  case turnLeft:
+    digitalWrite(left1, LOW);
+    digitalWrite(left2, LOW);
+    digitalWrite(right1, HIGH);
+    digitalWrite(right2, LOW);
+    lastCode = irCode;
+    break;
+  case turnRight:
+    digitalWrite(left1, HIGH);
+    digitalWrite(left2, LOW);
+    digitalWrite(right1, LOW);
+    digitalWrite(right2, LOW);
+    lastCode = irCode;
+    break;
+  default:
+    errorCount++;
+    if(errorCount < 10)
     {
-    case goForward:
-      digitalWrite(left1, HIGH);
-      digitalWrite(left2, LOW);
-      digitalWrite(right1, HIGH);
-      digitalWrite(right2, LOW);
-      break;
-    case goBack:
-      digitalWrite(left1, LOW);
-      digitalWrite(left2, HIGH);
-      digitalWrite(right1, LOW);
-      digitalWrite(right2, HIGH);
-      break;
-    case turnLeft:
-      digitalWrite(left1, LOW);
-      digitalWrite(left2, LOW);
-      digitalWrite(right1, HIGH);
-      digitalWrite(right2, LOW);
-      break;
-    case turnRight:
-      digitalWrite(left1, HIGH);
-      digitalWrite(left2, LOW);
-      digitalWrite(right1, LOW);
-      digitalWrite(right2, LOW);
-      break;
-    case stopAll:
-      digitalWrite(left1, LOW);
-      digitalWrite(left2, LOW);
-      digitalWrite(right1, LOW);
-      digitalWrite(right2, LOW);
       break;
     }
-    delay(300);
+    errorCount = 0;
+  case stopAll:
+    digitalWrite(left1, LOW);
+    digitalWrite(left2, LOW);
+    digitalWrite(right1, LOW);
+    digitalWrite(right2, LOW);
+    break;
   }
+
   delay(100);
 }
-
-
 
