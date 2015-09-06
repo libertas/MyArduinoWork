@@ -27,6 +27,8 @@ void loop()
 
   if(irCode != lastCode)
   {
+    lastCode = irCode;
+
     switch(irCode)
     {
     case goForward:
