@@ -34,12 +34,14 @@ void loop()
     case goForward:
       digitalWrite(left1, HIGH);
       digitalWrite(left2, LOW);
+      delay(70);
       digitalWrite(right1, HIGH);
       digitalWrite(right2, LOW);
       break;
     case goBack:
       digitalWrite(left1, LOW);
       digitalWrite(left2, HIGH);
+      delay(70);
       digitalWrite(right1, LOW);
       digitalWrite(right2, HIGH);
       break;
