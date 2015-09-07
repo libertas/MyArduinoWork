@@ -42,7 +42,7 @@ void beeBee()
 
 void setup()
 {
-  wdt_enable(WDTO_1S);
+  wdt_enable(WDTO_2S);
   wdt_reset();
   Serial.begin(9600);
   irrecv.enableIRIn(); // Start the receiver
