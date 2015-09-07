@@ -77,7 +77,7 @@ void loop()
   }
 
   cm = getDistance();
-  if(cm > 0.0 && cm < 15.0)
+  if(cm > 0.0 && cm < 7.0)
   {
     irCode = goBack;
     flagHorn = 1;
