@@ -7,7 +7,7 @@ IRrecv irrecv(RECV_PIN);
 decode_results results;
 
 const int left1 = 5, left2 = 6, right1 = 7, right2 = 8;
-const unsigned long goForward = 0xFF18E7, goBack = 0xFF4AB5, turnLeft = 0xFF10EF, turnRight = 0xFF5AA5, stopAll = 0xFF38C7;
+const unsigned long goForward = 0xFFC03F, goBack = 0xFF40BF, turnLeft = 0xFF708F, turnRight = 0xFF5AA5, stopAll = 0xFF58A7;
 
 void setup()
 {
