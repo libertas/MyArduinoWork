@@ -22,7 +22,7 @@ inline double getDistance()
   digitalWrite(trig, HIGH);
   delayMicroseconds(10);
   digitalWrite(trig, LOW);
-  return pulseIn(echo, HIGH, 2000UL) / 58.8;
+  return pulseIn(echo, HIGH, 5000UL) / 58.8;
 }
 
 void setup()
@@ -60,9 +60,9 @@ void loop()
   }
 
   cm = getDistance();
-  if(cm > 0.0 && cm < 5.0)
+  if(cm > 0.0 && cm < 15.0)
   {
-    while(1);
+    irCode = goBack;
   }
 
   switch(irCode)
