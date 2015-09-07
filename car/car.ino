@@ -11,9 +11,11 @@ const int left1 = 5, left2 = 6, right1 = 7, right2 = 8;
 const unsigned long goForward = 0xFFC03F
 , goBack = 0xFF40BF
 , turnLeft = 0xFF708F
-, turnRight = 0xFF58A7;
+, turnRight = 0xFF58A7
+, turnOnHorn = 0xFFE01F;
 
-int trig = 4, echo = 3;
+const int trig = 4, echo = 3;
+const int horn = 10;
 
 inline double getDistance()
 {
@@ -25,9 +27,22 @@ inline double getDistance()
   return pulseIn(echo, HIGH, 5000UL) / 58.8;
 }
 
+void beeBee()
+{
+  unsigned int i;
+  for(i=0; i<200; i++)
+  {
+    digitalWrite(horn, HIGH);
+    delay(1);
+    digitalWrite(horn, LOW);
+    delay(1);
+  }
+  delay(300);
+}
+
 void setup()
 {
-  wdt_enable(WDTO_250MS);
+  wdt_enable(WDTO_1S);
   wdt_reset();
   Serial.begin(9600);
   irrecv.enableIRIn(); // Start the receiver
@@ -37,6 +52,7 @@ void setup()
   pinMode(right2, OUTPUT);
   pinMode(echo, INPUT);
   pinMode(trig, OUTPUT);
+  pinMode(horn, OUTPUT);
 }
 
 void loop()
@@ -45,7 +61,8 @@ void loop()
   unsigned long irCode = 0;
   static unsigned long lastCode;
   static unsigned char errorCount;
-  unsigned cm;
+  double cm;
+  unsigned char flagHorn = 0;
 
   if (irrecv.decode(&results))
   {
@@ -63,6 +80,7 @@ void loop()
   if(cm > 0.0 && cm < 15.0)
   {
     irCode = goBack;
+    flagHorn = 1;
   }
 
   switch(irCode)
@@ -99,6 +117,11 @@ void loop()
     errorCount = 0;
     lastCode = irCode;
     break;
+  case turnOnHorn:
+    flagHorn = 1;
+    errorCount = 0;
+    lastCode = irCode;
+    break;
   default:
     errorCount++;
     if(errorCount < 5)
@@ -112,6 +135,11 @@ void loop()
     digitalWrite(right1, LOW);
     digitalWrite(right2, LOW);
     break;
+  }
+
+  if(flagHorn)
+  {
+    beeBee();
   }
 
   delay(50);
