@@ -63,6 +63,7 @@ void loop()
   static unsigned char errorCount;
   double cm;
   unsigned char flagHorn = 0;
+  unsigned char spd;
 
   if (irrecv.decode(&results))
   {
@@ -74,6 +75,11 @@ void loop()
   if(irCode == 0xffffffff)
   {
     irCode = lastCode;
+    spd = 255;
+  }
+  else
+  {
+    spd = 150;
   }
 
   cm = getDistance();
@@ -95,22 +101,22 @@ void loop()
     break;
   case goBack:
     digitalWrite(left1, LOW);
-    digitalWrite(left2, HIGH);
+    analogWrite(left2, spd);
     digitalWrite(right1, LOW);
-    digitalWrite(right2, HIGH);
+    analogWrite(right2, spd);
     errorCount = 0;
     lastCode = irCode;
     break;
   case turnLeft:
     digitalWrite(left1, LOW);
     digitalWrite(left2, LOW);
-    analogWrite(right1, 150);
+    analogWrite(right1, spd);
     digitalWrite(right2, LOW);
     errorCount = 0;
     lastCode = irCode;
     break;
   case turnRight:
-    analogWrite(left1, 150);
+    analogWrite(left1, spd);
     digitalWrite(left2, LOW);
     digitalWrite(right1, LOW);
     digitalWrite(right2, LOW);
