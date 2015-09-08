@@ -14,6 +14,8 @@ const unsigned long goForward = 0xFFC03F
 , turnRight = 0xFF58A7
 , turnOnHorn = 0xFFE01F;
 
+const unsigned long goBackFullSpeed = 0xFFAAAA;  // just a magic number
+
 const int trig = 4, echo = 3;
 const int horn = 14;
 
@@ -85,7 +87,7 @@ void loop()
   cm = getDistance();
   if(cm > 0.0 && cm < 7.0)
   {
-    irCode = goBack;
+    irCode = goBackFullSpeed;
     flagHorn = 1;
   }
 
@@ -127,6 +129,12 @@ void loop()
     flagHorn = 1;
     errorCount = 0;
     lastCode = irCode;
+    break;
+  case goBackFullSpeed:
+    digitalWrite(left1, LOW);
+    digitalWrite(left2, HIGH);
+    digitalWrite(right1, LOW);
+    digitalWrite(right2, HIGH);
     break;
   default:
     errorCount++;
