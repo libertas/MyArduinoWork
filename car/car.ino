@@ -92,18 +92,18 @@ void loop()
   switch(irCode)
   {
   case goForward:
-    digitalWrite(left1, HIGH);
+    digitalWrite(left1, HIGH);  // full speed
     digitalWrite(left2, LOW);
-    digitalWrite(right1, HIGH);
+    analogWrite(right1, 235);  // this must be modified depending on your situation
     digitalWrite(right2, LOW);
     errorCount = 0;
     lastCode = irCode;
     break;
   case goBack:
     digitalWrite(left1, LOW);
-    analogWrite(left2, spd);
+    analogWrite(left2, 235);  // this must be modified depending on your situation
     digitalWrite(right1, LOW);
-    analogWrite(right2, spd);
+    analogWrite(right2, 200);  // this must be modified depending on your situation
     errorCount = 0;
     lastCode = irCode;
     break;
