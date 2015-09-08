@@ -1,13 +1,13 @@
 #include <avr/wdt.h>
 #include <IRremote.h>
 
-int RECV_PIN = 9;
+int RECV_PIN = 8;
 
 IRrecv irrecv(RECV_PIN);
 
 decode_results results;
 
-const int left1 = 5, left2 = 6, right1 = 7, right2 = 8;
+const int left1 = 9, left2 = 5, right1 = 10, right2 = 6;
 const unsigned long goForward = 0xFFC03F
 , goBack = 0xFF40BF
 , turnLeft = 0xFF708F
@@ -15,7 +15,7 @@ const unsigned long goForward = 0xFFC03F
 , turnOnHorn = 0xFFE01F;
 
 const int trig = 4, echo = 3;
-const int horn = 10;
+const int horn = 14;
 
 inline double getDistance()
 {
