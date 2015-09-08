@@ -104,13 +104,13 @@ void loop()
   case turnLeft:
     digitalWrite(left1, LOW);
     digitalWrite(left2, LOW);
-    digitalWrite(right1, HIGH);
+    analogWrite(right1, 150);
     digitalWrite(right2, LOW);
     errorCount = 0;
     lastCode = irCode;
     break;
   case turnRight:
-    digitalWrite(left1, HIGH);
+    analogWrite(left1, 150);
     digitalWrite(left2, LOW);
     digitalWrite(right1, LOW);
     digitalWrite(right2, LOW);
