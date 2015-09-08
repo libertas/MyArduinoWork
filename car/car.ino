@@ -135,6 +135,8 @@ void loop()
     digitalWrite(left2, HIGH);
     digitalWrite(right1, LOW);
     digitalWrite(right2, HIGH);
+    errorCount = 0;
+    lastCode = irCode;
     break;
   default:
     errorCount++;
