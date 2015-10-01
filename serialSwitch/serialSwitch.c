@@ -46,6 +46,19 @@ int main()
     unsigned char i, j;
     DDRA = 0xff;
     DDRC = 0xff;
+    PORTA = 0x00;
+    PORTC = 0x00;
+    for(i = 'a'; i < 'a' + 8; i++)
+    {
+        PORTA = PORTA << 1;
+        PORTA |= (readEEPROM(i) - '0') & 0x01;
+    }
+
+    for(i = 'a' + 8; i < 'a' + 16; i++)
+    {
+        PORTC = PORTC << 1;
+        PORTC |= (readEEPROM(i) - '0') & 0x01;
+    }
     initUSART();
     while(1)
     {
