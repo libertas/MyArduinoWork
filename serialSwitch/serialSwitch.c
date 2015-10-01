@@ -25,18 +25,37 @@ void initUSART()
 
 int main()
 {
-    unsigned char tmp;
-    DDRB = 0xff;
-    initUSART(9600);
+    unsigned char codeUSART[3];
+    unsigned char i, j;
     DDRA = 0xff;
+    DDRC = 0xff;
+    initUSART(9600);
     while(1)
     {
-        PORTB = ~PORTB;
-        tmp = receiveUSART();
-        if(tmp != 19)
+        for(i = 0; i < 3; i++)
         {
-            PORTA = ~tmp;
-            sendUSART(tmp);
+            codeUSART[i] = receiveUSART();
+            if(codeUSART[i] == 19)
+            {
+                for(j = 0; j < 3; j++)
+                    codeUSART[i] = 0x00;
+                break;
+            }
+        }
+        switch(codeUSART[0])
+        {
+            case 'A':
+                if(codeUSART[2] - '0')
+                    PORTA |= 1 << (codeUSART[1] - '0');
+                else
+                    PORTA &= ~(1 << (codeUSART[1] - '0'));
+                break;
+            case 'C':
+                if(codeUSART[2] - '0')
+                    PORTC |= 1 << (codeUSART[1] - '0');
+                else
+                    PORTC &= ~(1 << (codeUSART[1] - '0'));
+                break;
         }
     }
     return 0;
