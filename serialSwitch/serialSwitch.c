@@ -3,6 +3,23 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
+void writeEEPROM(unsigned int addr, unsigned char data)
+{
+    while(EECR & (1 << EEWE));
+    EEAR = addr;
+    EEDR = data;
+    EECR |= 1 << EEMWE;
+    EECR |= 1 << EEWE;
+}
+
+unsigned char readEEPROM(unsigned int addr)
+{
+    while(EECR & (1 << EEWE));
+    EEAR = addr;
+    EECR |= 1 << EERE;
+    return EEDR;
+}
+
 void sendUSART(unsigned char data)
 {
     while(!(UCSRA & (1 << UDRE)));
@@ -55,6 +72,20 @@ int main()
                     PORTC |= 1 << (codeUSART[1] - '0');
                 else
                     PORTC &= ~(1 << (codeUSART[1] - '0'));
+                break;
+            case 'E':
+                if(codeUSART[2] == 'i')
+                    for(i = 0; i < 255; i++)
+                        writeEEPROM(i, codeUSART[1]);
+                else if(codeUSART[2] == 'f')
+                    for(i = 0; i < 255; i++)
+                        writeEEPROM(i, 0xff);
+                else if(codeUSART[2] == 'r')
+                    PORTA = ~readEEPROM(codeUSART[1]);
+                else
+                    writeEEPROM(codeUSART[1], codeUSART[2]);
+                break;
+            default:
                 break;
         }
     }
