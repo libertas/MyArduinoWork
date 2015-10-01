@@ -29,7 +29,7 @@ int main()
     unsigned char i, j;
     DDRA = 0xff;
     DDRC = 0xff;
-    initUSART(9600);
+    initUSART();
     while(1)
     {
         for(i = 0; i < 3; i++)
