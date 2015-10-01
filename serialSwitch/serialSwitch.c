@@ -43,21 +43,21 @@ void initUSART()
 int main()
 {
     unsigned char codeUSART[3];
-    unsigned char i, j;
+    unsigned char i, j, addr;
     DDRA = 0xff;
     DDRC = 0xff;
     PORTA = 0x00;
     PORTC = 0x00;
     for(i = 'a'; i < 'a' + 8; i++)
     {
-        PORTA = PORTA << 1;
-        PORTA |= (readEEPROM(i) - '0') & 0x01;
+        PORTA = PORTA >> 1;
+        PORTA |= ((readEEPROM(i) - '0') & 0x01) << 7;
     }
 
     for(i = 'a' + 8; i < 'a' + 16; i++)
     {
-        PORTC = PORTC << 1;
-        PORTC |= (readEEPROM(i) - '0') & 0x01;
+        PORTC = PORTC >> 1;
+        PORTC |= ((readEEPROM(i) - '0') & 0x01) << 7;
     }
     initUSART();
     while(1)
@@ -72,21 +72,35 @@ int main()
                 break;
             }
         }
+
+        addr = codeUSART[1] - '0';
         switch(codeUSART[0])
         {
-            case 'A':
+            case 'A':  // control port a
                 if(codeUSART[2] - '0')
-                    PORTA |= 1 << (codeUSART[1] - '0');
+                {
+                    writeEEPROM('a' + addr, '1');
+                    PORTA |= 1 << addr;
+                }
                 else
-                    PORTA &= ~(1 << (codeUSART[1] - '0'));
+                {
+                    writeEEPROM('a' + addr, '0');
+                    PORTA &= ~(1 << addr);
+                }
                 break;
-            case 'C':
+            case 'C':  // control port c
                 if(codeUSART[2] - '0')
-                    PORTC |= 1 << (codeUSART[1] - '0');
+                {
+                    writeEEPROM('a' + 8 + addr, '1');
+                    PORTC |= 1 << addr;
+                }
                 else
-                    PORTC &= ~(1 << (codeUSART[1] - '0'));
+                {
+                    writeEEPROM('a' + 8 + addr, '0');
+                    PORTC &= ~(1 << addr);
+                }
                 break;
-            case 'E':
+            case 'E':  // set eeprom data
                 if(codeUSART[2] == 'i')
                     for(i = 0; i < 255; i++)
                         writeEEPROM(i, codeUSART[1]);
