@@ -33,15 +33,10 @@ ISR(USART_RXC_vect)
 
 int main()
 {
-    DDRA = 0xff;
-    DDRC = 0xff;
-    PORTA = 0x00;
-    PORTC = 0x00;
     initUSART();
     sei();
     while(1)
     {
-        PORTC = !(UCSRA & (1 << RXC));
     }
     return 0;
 }
