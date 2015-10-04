@@ -32,22 +32,33 @@ unsigned char receiveUSART()
     return UDR;
 }
 
+void print(char *s)
+{
+    while(*s)
+    {
+        sendUSART(*s);
+        s++;
+    }
+}
+
 void initUSART()
 {
     UBRRH = 0;
     UBRRL = 103; // 9600Hz on 16MHz F_CPU
     UCSRB = (1 << RXEN) | (1 << TXEN);
-    UCSRC = (1 << URSEL) | (1 << USBS) | (3 << UCSZ0);
+    UCSRC = (1 << URSEL) | (3 << UCSZ0);
 }
 
 int main()
 {
     unsigned char codeUSART[3];
     unsigned char i, j, addr;
+
     DDRA = 0xff;
     DDRC = 0xff;
     PORTA = 0x00;
     PORTC = 0x00;
+
     for(i = 'a'; i < 'a' + 8; i++)
     {
         PORTA = PORTA >> 1;
@@ -59,7 +70,9 @@ int main()
         PORTC = PORTC >> 1;
         PORTC |= ((readEEPROM(i) - '0') & 0x01) << 7;
     }
+
     initUSART();
+
     while(1)
     {
         for(i = 0; i < 3; i++)
@@ -71,6 +84,14 @@ int main()
                     codeUSART[i] = 0x00;
                 break;
             }
+        }
+
+        if(codeUSART[0])
+        {
+            print("\nReceived:\n");
+            for(i = 0; i < 3; i++)
+                sendUSART(codeUSART[i]);
+            print("\n");
         }
 
         addr = codeUSART[1] - '0';
