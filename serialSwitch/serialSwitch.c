@@ -72,7 +72,7 @@ void runCmd(char code[])
     uint16_t i;
     uint16_t addr;
     uint16_t time, time1;
-    char port, pin;
+    char port, pin, buf[20];
     addr = code[1] - '0';
     switch(code[0])
     {
@@ -109,6 +109,22 @@ void runCmd(char code[])
                     writeEEPROM(i, 0xff);
             else if(code[2] == 'r')
                 PORTA = ~readEEPROM(code[1]);
+            else if(code[1] == 'R')
+            {
+                if(sscanf(code + 2, "%d", &addr) == 1)
+                {
+                    sprintf(buf, "%d.%x\n", addr, readEEPROM(addr));
+                    print(buf);
+                }
+                else
+                {
+                    for(i = 0; i < EEPROM_SIZE; i++)
+                    {
+                        sprintf(buf, "%d.%x\n", i, readEEPROM(i));
+                        print(buf);
+                    }
+                }
+            }
             else
                 writeEEPROM(code[1], code[2]);
                 break;
