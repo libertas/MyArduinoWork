@@ -1,4 +1,5 @@
 // Running on an Atmega 16a
+// 16 MHz
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -56,23 +57,6 @@ void initUSART()
     UBRRL = 103; // 9600Hz on 16MHz F_CPU
     UCSRB = (1 << RXEN) | (1 << TXEN);
     UCSRC = (1 << URSEL) | (3 << UCSZ0);
-}
-
-ISR(TIMER0_OVF_vect)
-{
-    static uint16_t t;
-    static uint16_t seconds;
-    t++;
-    if(t > (16000000UL / 1024))
-    {
-        t = 0;
-        seconds++;
-    }
-    if(seconds > 59)
-    {
-        seconds = 0;
-        timerMinutes++;
-    }
 }
 
 void initTimer0()
@@ -145,6 +129,42 @@ void runCmd(char code[])
             break;
         default:
             break;
+    }
+}
+
+ISR(TIMER0_OVF_vect)
+{
+    static uint16_t t;
+    static uint8_t seconds;
+    static uint16_t p;
+    uint16_t time, i;
+    char buf[100];
+
+    t++;
+
+    if(t > (16000000UL / 1024))
+    {
+        t = 0;
+        seconds++;
+    }
+
+    if(seconds > 59)
+    {
+        seconds = 0;
+        timerMinutes++;
+    }
+
+    time = ((uint16_t)readEEPROM(EEPROM_SIZE - 1 - p)) << 8 | readEEPROM(EEPROM_SIZE - 2 - p);
+
+    if(time != 0xffff)
+    {
+        p -= 2;
+        if(timerMinutes >= time)
+        {
+            for(i = 0; '\n' != (buf[i] = readEEPROM(p)); i++, p--);
+            runCmd(buf);
+            timerMinutes = 0;
+        }
     }
 }
 
