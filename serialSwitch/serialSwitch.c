@@ -70,8 +70,9 @@ void initTimer0()
 void runCmd(char code[])
 {
     uint16_t i;
-    uint8_t addr;
-    uint16_t time;
+    uint16_t addr;
+    uint16_t time, time1;
+    char port, pin;
     addr = code[1] - '0';
     switch(code[0])
     {
@@ -111,7 +112,7 @@ void runCmd(char code[])
             else
                 writeEEPROM(code[1], code[2]);
                 break;
-        case 'T':
+        case 'T':  // Timer
             if(sscanf(code, "T%d%s", &time, code) == 2)
             {
                 writeEEPROM(stackP--, (uint8_t)(time >> 8));
@@ -125,6 +126,27 @@ void runCmd(char code[])
             else
             {
                 print("Wrong code!\n");
+                return;
+            }
+            break;
+        case 'U':  // Duty of each pin
+            if(sscanf(code, "U%c%c%d/%d", &port, &pin, &time, &time1) == 4)
+            {
+                if(port == 'A')
+                    addr = 16;
+                else if(port == 'C')
+                    addr = 48;
+                else
+                {
+                    printf("Wrong port\n");
+                    return;
+                }
+                if(pin - '0' < 10 && pin - '0' >= 0)
+                    addr += (pin - '0') * 4;
+                writeEEPROM(addr, time >> 8);
+                writeEEPROM(addr + 1, time);
+                writeEEPROM(addr + 2, time1 >> 8);
+                writeEEPROM(addr + 3, time1);
             }
             break;
         default:
