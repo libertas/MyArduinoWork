@@ -100,10 +100,10 @@ void runCmd(const unsigned char code[])
             break;
         case 'E':  // set eeprom data
             if(code[2] == 'i')
-                for(i = 0; i < 255; i++)
+                for(i = 0; i < 16; i++)
                     writeEEPROM(i, code[1]);
             else if(code[2] == 'f')
-                for(i = 0; i < 255; i++)
+                for(i = 0; i < 16; i++)
                     writeEEPROM(i, 0xff);
             else if(code[2] == 'r')
                 PORTA = ~readEEPROM(code[1]);
