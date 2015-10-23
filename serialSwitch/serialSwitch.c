@@ -78,6 +78,14 @@ void initTimer0()
     sei();
 }
 
+void initTimer2()
+{
+    TCCR2 = (1 << CS22) | (1 << CS21) | (1 << CS20);  // CLKio / 1024
+    TCNT2 = 0;
+    TIMSK = _BV(TOIE2);
+    sei();
+}
+
 void runCmd(char code[])
 {
     uint16_t i;
@@ -225,6 +233,48 @@ ISR(TIMER0_OVF_vect)
     }
 }
 
+ISR(TIMER2_OVF_vect)
+{
+    static uint16_t t, sec;
+    static uint16_t m[16], status;
+    uint16_t i;
+    t++;
+    if(t == F_CPU/256/1024)
+    {
+        t = 0;
+        sec++;
+        if(sec >= 6)
+        {
+            sec = 0;
+            for(i = 0; i < 16; i++)
+                m[i]--;
+        }
+    }
+    for(i = 0; i < 16; i++)
+    {
+        if(m[i] == 0)
+        {
+            if(i < 8)
+            {
+                PORTA ^= 1 << i;
+            }
+            else
+            {
+                PORTC ^= 1 << (i - 8);
+            }
+            if(status & 1 << (i - 8))
+            {
+                m[i] = dutyL[i];
+            }
+            else
+            {
+                m[i] = dutyH[i];
+            }
+            status ^= 1 << i;
+        }
+    }
+}
+
 int main()
 {
     char codeUSART[MAXCMDLEN];
@@ -248,7 +298,9 @@ int main()
     }
 
     initUSART();
+    setDuty();
     initTimer0();
+    initTimer2();
 
     while(1)
     {
