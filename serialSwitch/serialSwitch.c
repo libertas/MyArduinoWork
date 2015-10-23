@@ -78,7 +78,7 @@ int main()
         for(i = 0; i < 3; i++)
         {
             codeUSART[i] = receiveUSART();
-            if(codeUSART[i] == 19)
+            if(codeUSART[i] == 19 || codeUSART[i] == '\n')
             {
                 for(j = 0; j < 3; j++)
                     codeUSART[i] = 0x00;
