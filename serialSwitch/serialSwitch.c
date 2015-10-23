@@ -12,6 +12,7 @@
 
 uint16_t timerMinutes = 0;
 uint16_t stackP = EEPROM_SIZE - 1;
+uint16_t dutyH[16], dutyL[16];
 
 void writeEEPROM(unsigned int addr, unsigned char data)
 {
@@ -28,6 +29,16 @@ unsigned char readEEPROM(unsigned int addr)
     EEAR = addr;
     EECR |= 1 << EERE;
     return EEDR;
+}
+
+void setDuty()
+{
+    uint8_t i;
+    for(i = 0 + 16; i < 64 + 16; i += 2)
+    {
+        dutyH[i / 2] = ((uint16_t)readEEPROM(i)) << 8 | readEEPROM(i + 1);
+        dutyL[i / 2] = ((uint16_t)readEEPROM(i + 1)) << 8 | readEEPROM(i + 3);
+    }
 }
 
 void sendUSART(unsigned char data)
@@ -169,6 +180,7 @@ void runCmd(char code[])
                 writeEEPROM(addr + 1, time);
                 writeEEPROM(addr + 2, time1 >> 8);
                 writeEEPROM(addr + 3, time1);
+                setDuty();
             }
             break;
         default:
@@ -216,7 +228,7 @@ ISR(TIMER0_OVF_vect)
 int main()
 {
     char codeUSART[MAXCMDLEN];
-    unsigned char i, j;
+    unsigned char i;
 
     DDRA = 0xff;
     DDRC = 0xff;
