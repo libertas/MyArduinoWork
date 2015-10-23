@@ -150,6 +150,7 @@ void runCmd(char code[])
             }
             break;
         default:
+            print("Unrecognised code\n");
             break;
     }
 }
@@ -222,8 +223,7 @@ int main()
             codeUSART[i] = receiveUSART();
             if(codeUSART[i] == 19 || codeUSART[i] == '\n')
             {
-                for(j = 0; j < 3; j++)
-                    codeUSART[i] = 0x00;
+                codeUSART[i] = '\0';
                 break;
             }
         }
@@ -231,8 +231,12 @@ int main()
         if(codeUSART[0])
         {
             print("\nReceived:\n");
-            for(i = 0; i < 3; i++)
+            for(i = 0; i < MAXCMDLEN; i++)
+            {
                 sendUSART(codeUSART[i]);
+                if(codeUSART[i] == '\0')
+                    break;
+            }
             print("\n");
         }
 
