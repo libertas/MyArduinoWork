@@ -6,6 +6,12 @@
 #include <stdio.h>
 #include <string.h>
 
+#define EEPROM_SIZE 512
+#define MAXCMDLEN 100
+
+uint16_t timerMinutes = 0;
+uint16_t stackP = EEPROM_SIZE - 1;
+
 void writeEEPROM(unsigned int addr, unsigned char data)
 {
     while(EECR & (1 << EEWE));
@@ -54,7 +60,19 @@ void initUSART()
 
 ISR(TIMER0_OVF_vect)
 {
-    
+    static uint16_t t;
+    static uint16_t seconds;
+    t++;
+    if(t > (16000000UL / 1024))
+    {
+        t = 0;
+        seconds++;
+    }
+    if(seconds > 59)
+    {
+        seconds = 0;
+        timerMinutes++;
+    }
 }
 
 void initTimer0()
@@ -65,12 +83,11 @@ void initTimer0()
     sei();
 }
 
-#define MAXCMDLEN 100
-
-void runCmd(const unsigned char code[])
+void runCmd(char code[])
 {
     uint16_t i;
     uint8_t addr;
+    uint16_t time;
     addr = code[1] - '0';
     switch(code[0])
     {
@@ -110,6 +127,22 @@ void runCmd(const unsigned char code[])
             else
                 writeEEPROM(code[1], code[2]);
                 break;
+        case 'T':
+            if(sscanf(code, "T%d%s", &time, code) == 2)
+            {
+                writeEEPROM(stackP--, (uint8_t)(time >> 8));
+                writeEEPROM(stackP--, (uint8_t)time);
+                for(i = 0; i < strlen(code); i++)
+                {
+                    writeEEPROM(stackP--, code[i]);
+                }
+                writeEEPROM(stackP--, '\n');
+            }
+            else
+            {
+                print("Wrong code!\n");
+            }
+            break;
         default:
             break;
     }
@@ -117,7 +150,7 @@ void runCmd(const unsigned char code[])
 
 int main()
 {
-    unsigned char codeUSART[MAXCMDLEN];
+    char codeUSART[MAXCMDLEN];
     unsigned char i, j;
 
     DDRA = 0xff;
