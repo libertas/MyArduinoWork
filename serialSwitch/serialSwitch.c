@@ -2,6 +2,7 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
+#include <stdio.h>
 
 void writeEEPROM(unsigned int addr, unsigned char data)
 {
@@ -49,10 +50,60 @@ void initUSART()
     UCSRC = (1 << URSEL) | (3 << UCSZ0);
 }
 
+#define MAXCMDLEN 100
+
+void runCmd(const unsigned char code[])
+{
+    uint16_t i;
+    uint8_t addr;
+    addr = code[1] - '0';
+    switch(code[0])
+    {
+        case 'A':  // control port a
+            if(code[2] - '0')
+            {
+                writeEEPROM('a' + addr, '1');
+                PORTA |= 1 << addr;
+            }
+            else
+            {
+                writeEEPROM('a' + addr, '0');
+                PORTA &= ~(1 << addr);
+            }
+            break;
+        case 'C':  // control port c
+            if(code[2] - '0')
+            {
+                writeEEPROM('a' + 8 + addr, '1');
+                PORTC |= 1 << addr;
+            }
+            else
+            {
+                writeEEPROM('a' + 8 + addr, '0');
+                PORTC &= ~(1 << addr);
+            }
+            break;
+        case 'E':  // set eeprom data
+            if(code[2] == 'i')
+                for(i = 0; i < 255; i++)
+                    writeEEPROM(i, code[1]);
+            else if(code[2] == 'f')
+                for(i = 0; i < 255; i++)
+                    writeEEPROM(i, 0xff);
+            else if(code[2] == 'r')
+                PORTA = ~readEEPROM(code[1]);
+            else
+                writeEEPROM(code[1], code[2]);
+                break;
+        default:
+            break;
+    }
+}
+
 int main()
 {
-    unsigned char codeUSART[3];
-    unsigned char i, j, addr;
+    unsigned char codeUSART[MAXCMDLEN];
+    unsigned char i, j;
 
     DDRA = 0xff;
     DDRC = 0xff;
@@ -75,7 +126,7 @@ int main()
 
     while(1)
     {
-        for(i = 0; i < 3; i++)
+        for(i = 0; i < MAXCMDLEN; i++)
         {
             codeUSART[i] = receiveUSART();
             if(codeUSART[i] == 19 || codeUSART[i] == '\n')
@@ -94,48 +145,7 @@ int main()
             print("\n");
         }
 
-        addr = codeUSART[1] - '0';
-        switch(codeUSART[0])
-        {
-            case 'A':  // control port a
-                if(codeUSART[2] - '0')
-                {
-                    writeEEPROM('a' + addr, '1');
-                    PORTA |= 1 << addr;
-                }
-                else
-                {
-                    writeEEPROM('a' + addr, '0');
-                    PORTA &= ~(1 << addr);
-                }
-                break;
-            case 'C':  // control port c
-                if(codeUSART[2] - '0')
-                {
-                    writeEEPROM('a' + 8 + addr, '1');
-                    PORTC |= 1 << addr;
-                }
-                else
-                {
-                    writeEEPROM('a' + 8 + addr, '0');
-                    PORTC &= ~(1 << addr);
-                }
-                break;
-            case 'E':  // set eeprom data
-                if(codeUSART[2] == 'i')
-                    for(i = 0; i < 255; i++)
-                        writeEEPROM(i, codeUSART[1]);
-                else if(codeUSART[2] == 'f')
-                    for(i = 0; i < 255; i++)
-                        writeEEPROM(i, 0xff);
-                else if(codeUSART[2] == 'r')
-                    PORTA = ~readEEPROM(codeUSART[1]);
-                else
-                    writeEEPROM(codeUSART[1], codeUSART[2]);
-                break;
-            default:
-                break;
-        }
+        runCmd(codeUSART);
     }
     return 0;
 }
