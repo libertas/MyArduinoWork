@@ -81,24 +81,30 @@ void runCmd(char code[])
             {
                 writeEEPROM(addr, '1');
                 PORTA |= 1 << addr;
+                sprintf(buf, "UA%c100/0", code[1]);
             }
             else
             {
                 writeEEPROM(addr, '0');
                 PORTA &= ~(1 << addr);
+                sprintf(buf, "UA%c0/100", code[1]);
             }
+            runCmd(buf);
             break;
         case 'C':  // control port c
             if(code[2] - '0')
             {
                 writeEEPROM(8 + addr, '1');
                 PORTC |= 1 << addr;
+                sprintf(buf, "UC%c100/0", code[1]);
             }
             else
             {
                 writeEEPROM(8 + addr, '0');
                 PORTC &= ~(1 << addr);
+                sprintf(buf, "UC%c0/100", code[1]);
             }
+            runCmd(buf);
             break;
         case 'E':  // set eeprom data
             if(code[2] == 'i')
