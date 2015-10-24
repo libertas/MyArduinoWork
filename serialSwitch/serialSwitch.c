@@ -16,6 +16,7 @@ uint16_t dutyH[16], dutyL[16];
 uint16_t m[16];
 uint16_t status;
 
+char buf[100];
 char debugStr[100];
 
 void writeEEPROM(unsigned int addr, unsigned char data)
@@ -103,7 +104,7 @@ void runCmd(char code[])
 	uint16_t i;
 	uint16_t addr;
 	uint16_t time, time1;
-	char port, pin, buf[20];
+	char port, pin;
 	addr = code[1] - '0';
 	switch (code[0]) {
 	case 'A':		// control port a
@@ -201,7 +202,6 @@ ISR(TIMER0_OVF_vect)
 	static uint8_t seconds;
 	static uint16_t p;
 	uint16_t time, i;
-	char buf[100];
 
 	t++;
 
@@ -288,7 +288,7 @@ int main()
 
 	setDuty();
 
-	// initTimer0();
+	initTimer0();
 
 	initTimer2();
 
