@@ -51,8 +51,6 @@ void setDuty()
 			m[i] = dutyH[i];
 		else
 			m[i] = dutyL[i];
-		sprintf(debugStr, "%u:%u %u\n", i, dutyH[i], dutyL[i]);
-		print(debugStr);
 	}
 }
 
@@ -112,20 +110,27 @@ void runCmd(char code[])
 		if (code[2] - '0') {
 			writeEEPROM(addr, '1');
 			PORTA |= 1 << addr;
+			sprintf(buf, "UA%c65535/0", code[1]);
+			status |= 1 << addr;
 		} else {
 			writeEEPROM(addr, '0');
 			PORTA &= ~(1 << addr);
+			sprintf(buf, "UA%c0/65535", code[1]);
+			status &= ~(1 << addr);
 		}
+		runCmd(buf);
 		break;
 	case 'C':		// control port c
 		if (code[2] - '0') {
 			writeEEPROM(8 + addr, '1');
 			PORTC |= 1 << addr;
-			sprintf(buf, "UC%c100/0", code[1]);
+			sprintf(buf, "UC%c65535/0", code[1]);
+			status |= 1 << (8 + addr);
 		} else {
 			writeEEPROM(8 + addr, '0');
 			PORTC &= ~(1 << addr);
-			sprintf(buf, "UC%c0/100", code[1]);
+			sprintf(buf, "UC%c0/65535", code[1]);
+			status ^= ~(1 << (8 + addr));
 		}
 		runCmd(buf);
 		break;
