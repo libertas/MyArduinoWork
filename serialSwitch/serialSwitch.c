@@ -13,6 +13,10 @@
 uint16_t timerMinutes = 0;
 uint16_t stackP = EEPROM_SIZE - 1;
 uint16_t dutyH[16], dutyL[16];
+uint16_t m[16];
+uint16_t status;
+
+char debugStr[100];
 
 void writeEEPROM(unsigned int addr, unsigned char data)
 {
@@ -34,11 +38,21 @@ unsigned char readEEPROM(unsigned int addr)
 void setDuty()
 {
 	uint8_t i;
-	for (i = 0 + 16; i < 64 + 16; i += 2) {
-		dutyH[(i - 16) / 2] =
+	for (i = 0 + 16; i < 64 + 16; i += 4) {
+		dutyH[(i - 16) / 4] =
 		    ((uint16_t) readEEPROM(i)) << 8 | readEEPROM(i + 1);
-		dutyL[(i - 16) / 2] =
-		    ((uint16_t) readEEPROM(i + 1)) << 8 | readEEPROM(i + 3);
+		dutyL[(i - 16) / 4] =
+		    ((uint16_t) readEEPROM(i + 2)) << 8 | readEEPROM(i + 3);
+	}
+
+	for(i = 0; i < 16; i++)
+	{
+		if(status & (1 << i))
+			m[i] = dutyH[i];
+		else
+			m[i] = dutyL[i];
+		sprintf(debugStr, "%u:%u %u\n", i, dutyH[i], dutyL[i]);
+		print(debugStr);
 	}
 }
 
@@ -98,13 +112,10 @@ void runCmd(char code[])
 		if (code[2] - '0') {
 			writeEEPROM(addr, '1');
 			PORTA |= 1 << addr;
-			sprintf(buf, "UA%c100/0", code[1]);
 		} else {
 			writeEEPROM(addr, '0');
 			PORTA &= ~(1 << addr);
-			sprintf(buf, "UA%c0/100", code[1]);
 		}
-		runCmd(buf);
 		break;
 	case 'C':		// control port c
 		if (code[2] - '0') {
@@ -217,8 +228,6 @@ ISR(TIMER0_OVF_vect)
 ISR(TIMER2_OVF_vect)
 {
 	static uint16_t t, sec;
-	static uint16_t status;
-	static signed int m[16];
 	uint16_t i;
 	t++;
 	if (t == F_CPU / 256 / 1024) {
@@ -230,24 +239,19 @@ ISR(TIMER2_OVF_vect)
 				if (m[i] > 0) {
 					m[i]--;
 				} else {
-					if (m[i] == 0) {
-						if (i < 8) {
-							PORTA ^= 1 << i;
-						} else {
-							PORTC ^= 1 << (i - 8);
-						}
-
-						if(status & 1 << i)
-						{
-							m[i] = dutyL[i];
-						}
-						else
-						{
-							m[i] = dutyH[i];
-						}
-						status ^= 1 << i;
+					if (i < 8) {
+						PORTA ^= 1 << i;
+					} else {
+						PORTC ^= 1 << (i - 8);
 					}
 
+					if(status & 1 << i)
+					{
+						m[i] = dutyL[i];
+					} else {
+						m[i] = dutyH[i];
+					}
+					status ^= 1 << i;
 				}
 			}
 		}
@@ -275,8 +279,11 @@ int main()
 	}
 
 	initUSART();
+
 	setDuty();
+
 	// initTimer0();
+
 	initTimer2();
 
 	while (1) {
