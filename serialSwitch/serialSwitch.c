@@ -232,13 +232,14 @@ ISR(TIMER0_OVF_vect)
 
 ISR(TIMER2_OVF_vect)
 {
-	static uint16_t t, sec;
+	static uint16_t t;
+	static uint8_t sec;
 	uint16_t i;
 	t++;
 	if (t == F_CPU / 256 / 1024) {
 		t = 0;
 		sec++;
-		if (sec >= 1) {
+		if (sec >= 60) {
 			sec = 0;
 			for (i = 0; i < 16; i++) {
 				if (m[i] > 0) {
