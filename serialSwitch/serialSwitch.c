@@ -284,6 +284,8 @@ int main()
 		PORTC |= ((readEEPROM(i) - '0') & 0x01) << 7;
 	}
 
+	status = ((uint16_t) PORTC) << 8 | (uint16_t) PORTA;
+
 	initUSART();
 
 	setDuty();
