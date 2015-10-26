@@ -10,8 +10,7 @@
 #define EEPROM_SIZE 512
 #define MAXCMDLEN 100
 
-uint16_t timerMinutes = 0;
-uint16_t stackP = EEPROM_SIZE - 1;
+uint16_t stackTail = EEPROM_SIZE - 1;
 uint16_t dutyH[16], dutyL[16];
 uint16_t m[16];
 uint16_t status;
@@ -57,9 +56,8 @@ void setDuty()
 		    ((uint16_t) readEEPROM(i + 2)) << 8 | readEEPROM(i + 3);
 	}
 
-	for(i = 0; i < 16; i++)
-	{
-		if(status & (1 << i))
+	for (i = 0; i < 16; i++) {
+		if (status & (1 << i))
 			m[i] = dutyH[i];
 		else
 			m[i] = dutyL[i];
@@ -98,16 +96,14 @@ void initTimer0()
 {
 	TCCR0 = (1 << CS02) | (1 << CS00);	// CLKio / 1024
 	TCNT0 = 0;
-	TIMSK = _BV(TOIE0);
-	sei();
+	TIMSK |= _BV(TOIE0);
 }
 
 void initTimer2()
 {
 	TCCR2 = (1 << CS22) | (1 << CS21) | (1 << CS20);	// CLKio / 1024
 	TCNT2 = 0;
-	TIMSK = _BV(TOIE2);
-	sei();
+	TIMSK |= _BV(TOIE2);
 }
 
 void runCmd(char code[])
@@ -171,12 +167,12 @@ void runCmd(char code[])
 		break;
 	case 'T':		// Timer
 		if (sscanf(code, "T%d%s", &time, code) == 2) {
-			writeEEPROM(stackP--, (uint8_t) (time >> 8));
-			writeEEPROM(stackP--, (uint8_t) time);
+			writeEEPROM(stackTail--, (uint8_t) (time >> 8));
+			writeEEPROM(stackTail--, (uint8_t) time);
 			for (i = 0; i < strlen(code); i++) {
-				writeEEPROM(stackP--, code[i]);
+				writeEEPROM(stackTail--, code[i]);
 			}
-			writeEEPROM(stackP--, '\n');
+			writeEEPROM(stackTail--, '\n');
 		} else {
 			print("Wrong code!\n");
 			return;
@@ -210,33 +206,33 @@ void runCmd(char code[])
 ISR(TIMER0_OVF_vect)
 {
 	static uint16_t t;
-	static uint8_t seconds;
+	static uint16_t seconds;
 	static uint16_t p;
 	uint16_t time, i;
 
 	t++;
-
-	if (t > (16000000UL / 1024)) {
+	if (t > F_CPU / 256 / 1024) {
 		t = 0;
 		seconds++;
-	}
-
-	if (seconds > 59) {
-		seconds = 0;
-		timerMinutes++;
-	}
-
-	time =
-	    ((uint16_t) readEEPROM(EEPROM_SIZE - 1 - p)) << 8 |
-	    readEEPROM(EEPROM_SIZE - 2 - p);
-
-	if (time != 0xffff) {
-		p -= 2;
-		if (timerMinutes >= time) {
-			for (i = 0; '\n' != (buf[i] = readEEPROM(p));
-			     i++, p--) ;
-			runCmd(buf);
-			timerMinutes = 0;
+		time =
+		    ((uint16_t) readEEPROM(EEPROM_SIZE - 1 - p)) << 8 |
+		    readEEPROM(EEPROM_SIZE - 2 - p);
+		if (time != 0xffff) {
+			p -= 2;
+			if (seconds >= time) {
+				for (i = 0;; i++, p--) {
+					buf[i] = readEEPROM(p);
+					if (buf[i] == '\n' || buf[i] == 19) {
+						buf[i + 1] = 0;
+						p--;
+						break;
+					}
+				}
+				print("Auto running command:");
+				print(buf);
+				runCmd(buf);
+				seconds = 0;
+			}
 		}
 	}
 }
@@ -246,8 +242,9 @@ ISR(TIMER2_OVF_vect)
 	static uint16_t t;
 	static uint8_t sec;
 	uint16_t i;
+
 	t++;
-	if (t == F_CPU / 256 / 1024) {
+	if (t > F_CPU / 256 / 1024) {
 		t = 0;
 		sec++;
 		if (sec >= 60) {
@@ -262,8 +259,7 @@ ISR(TIMER2_OVF_vect)
 						PORTC ^= 1 << (i - 8);
 					}
 
-					if(status & 1 << i)
-					{
+					if (status & 1 << i) {
 						m[i] = dutyL[i];
 					} else {
 						m[i] = dutyH[i];
@@ -305,6 +301,8 @@ int main()
 
 	initTimer2();
 
+	sei();
+
 	while (1) {
 		for (i = 0; i < MAXCMDLEN; i++) {
 			codeUSART[i] = receiveUSART();
@@ -328,3 +326,4 @@ int main()
 	}
 	return 0;
 }
+
