@@ -19,6 +19,17 @@ uint16_t status;
 char buf[100];
 char debugStr[100];
 
+/*
+    EEPROM Usage:
+        0  - 7 : Status of Port A
+		8  - 15: Status of Port B
+		16 - 80:
+				4 Bytes make a unit
+				Bit 0 and bit 1 is the time of high voltage
+				Bit 2 and bit 2 is the time of low voltage
+		X - 511: Commands will be executed at boot
+*/
+
 void writeEEPROM(unsigned int addr, unsigned char data)
 {
 	while (EECR & (1 << EEWE)) ;
