@@ -10,7 +10,7 @@
 #define EEPROM_SIZE 512
 #define MAXCMDLEN 100
 
-uint16_t stackTail = EEPROM_SIZE - 1;
+uint16_t stackTail;
 uint16_t dutyH[16], dutyL[16];
 uint16_t m[16];
 uint16_t status;
@@ -147,8 +147,14 @@ void runCmd(char code[])
 			for (i = 0; i < 16; i++)
 				writeEEPROM(i, code[1]);
 		else if (code[2] == 'f')
-			for (i = 0; i < 16; i++)
+		{
+			if(code[1] == 'a')
+				addr = EEPROM_SIZE;
+			else
+				addr = 16;
+			for (i = 0; i < addr; i++)
 				writeEEPROM(i, 0xff);
+		}
 		else if (code[2] == 'r')
 			PORTA = ~readEEPROM(code[1]);
 		else if (code[1] == 'R') {
@@ -198,7 +204,8 @@ void runCmd(char code[])
 		}
 		break;
 	default:
-		print("Unrecognised code\n");
+		sprintf(buf, "Unrecognised code:%s\n", code);
+		print(buf);
 		break;
 	}
 }
@@ -207,30 +214,33 @@ ISR(TIMER0_OVF_vect)
 {
 	static uint16_t t;
 	static uint16_t seconds;
-	static uint16_t p;
+	static uint16_t p = EEPROM_SIZE - 1;
 	uint16_t time, i;
+	char cmd[100];
 
 	t++;
 	if (t > F_CPU / 256 / 1024) {
 		t = 0;
 		seconds++;
 		time =
-		    ((uint16_t) readEEPROM(EEPROM_SIZE - 1 - p)) << 8 |
-		    readEEPROM(EEPROM_SIZE - 2 - p);
+		    ((uint16_t) readEEPROM(p)) << 8 |
+		    readEEPROM(p - 1);
+		sprintf(buf, "Time:%d\n", time);
+		print(buf);
 		if (time != 0xffff) {
-			p -= 2;
 			if (seconds >= time) {
+				p -= 2;
 				for (i = 0;; i++, p--) {
-					buf[i] = readEEPROM(p);
-					if (buf[i] == '\n' || buf[i] == 19) {
-						buf[i + 1] = 0;
+					cmd[i] = readEEPROM(p);
+					if (cmd[i] == '\n' || cmd[i] == 19) {
+					    cmd[i + 1] = 0;
 						p--;
 						break;
 					}
 				}
 				print("Auto running command:");
-				print(buf);
-				runCmd(buf);
+				print(cmd);
+				runCmd(cmd);
 				seconds = 0;
 			}
 		}
@@ -290,6 +300,8 @@ int main()
 		PORTC = PORTC >> 1;
 		PORTC |= ((readEEPROM(i) - '0') & 0x01) << 7;
 	}
+
+	for (stackTail = EEPROM_SIZE - 1; readEEPROM(stackTail) != 0xff; stackTail--);
 
 	status = ((uint16_t) PORTC) << 8 | (uint16_t) PORTA;
 
