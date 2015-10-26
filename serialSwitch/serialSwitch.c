@@ -225,7 +225,6 @@ ISR(TIMER0_OVF_vect)
 		time =
 		    ((uint16_t) readEEPROM(p)) << 8 |
 		    readEEPROM(p - 1);
-		sprintf(buf, "Time:%d\n", time);
 		print(buf);
 		if (time != 0xffff) {
 			if (seconds >= time) {
