@@ -10,6 +10,14 @@
 #define EEPROM_SIZE 512
 #define MAXCMDLEN 100
 
+#ifndef PORTA
+#define PORTA PORTD
+#endif
+
+#ifndef DDRA
+#define DDRA DDRD
+#endif
+
 uint16_t stackTail;
 uint16_t dutyH[16], dutyL[16];
 uint16_t m[16];
