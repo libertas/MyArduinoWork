@@ -88,7 +88,7 @@ void initUSART()
 {
 	UBRRH = 0;
 	UBRRL = 103;		// 9600Hz on 16MHz F_CPU
-	UCSRB = (1 << RXEN) | (1 << TXEN);
+	UCSRB = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE);
 	UCSRC = (1 << URSEL) | (3 << UCSZ0);
 }
 
@@ -279,10 +279,35 @@ ISR(TIMER2_OVF_vect)
 	}
 }
 
-int main()
+ISR(USART_RXC_vect)
 {
 	char codeUSART[MAXCMDLEN];
-	unsigned char i;
+	uint8_t i;
+
+	for (i = 0; i < MAXCMDLEN; i++) {
+		codeUSART[i] = receiveUSART();
+		if (codeUSART[i] == 19 || codeUSART[i] == '\n') {
+			codeUSART[i] = '\0';
+			break;
+		}
+	}
+
+	if (codeUSART[0]) {
+		print("\nReceived:\n");
+		for (i = 0; i < MAXCMDLEN; i++) {
+			sendUSART(codeUSART[i]);
+			if (codeUSART[i] == '\0')
+				break;
+		}
+		print("\n");
+	}
+
+	runCmd(codeUSART);
+}
+
+int main()
+{
+	uint8_t i;
 
 	DDRA = 0xff;
 	DDRC = 0xff;
@@ -313,27 +338,8 @@ int main()
 
 	sei();
 
-	while (1) {
-		for (i = 0; i < MAXCMDLEN; i++) {
-			codeUSART[i] = receiveUSART();
-			if (codeUSART[i] == 19 || codeUSART[i] == '\n') {
-				codeUSART[i] = '\0';
-				break;
-			}
-		}
+	while (1);
 
-		if (codeUSART[0]) {
-			print("\nReceived:\n");
-			for (i = 0; i < MAXCMDLEN; i++) {
-				sendUSART(codeUSART[i]);
-				if (codeUSART[i] == '\0')
-					break;
-			}
-			print("\n");
-		}
-
-		runCmd(codeUSART);
-	}
 	return 0;
 }
 
