@@ -10,14 +10,6 @@
 #define EEPROM_SIZE 512
 #define MAXCMDLEN 100
 
-#ifndef PORTA
-#define PORTA PORTD
-#endif
-
-#ifndef DDRA
-#define DDRA DDRD
-#endif
-
 uint16_t stackTail;
 uint16_t dutyH[16], dutyL[16];
 uint16_t m[16];
@@ -29,7 +21,7 @@ char debugStr[100];
 /*
     EEPROM Usage:
         0  - 7 : Status of Port A
-		8  - 15: Status of Port B
+		8  - 15: Status of Port C
 		16 - 80:
 				4 Bytes make a unit
 				Bit 0 and bit 1 is the time of high voltage
