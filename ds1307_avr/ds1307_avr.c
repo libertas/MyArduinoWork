@@ -59,6 +59,13 @@ uint8_t TWI_Write(uint8_t data)
 	return TWSR;
 }
 
+uint8_t TWI_Read()
+{
+	TWCR = _BV(TWINT) | _BV(TWEN) | _BV(TWEA);
+	while(!(TWCR & _BV(TWINT)));
+	return TWDR;
+}
+
 uint8_t TWI_Stop()
 {
 	TWCR = _BV(TWINT) | _BV(TWEN) | _BV(TWSTO);
@@ -85,6 +92,12 @@ void setupDS1307()
 		return;
 	}
 
+	if((TWI_Write(0x00) & 0xf8) != MT_DATA_ACK)
+	{
+		printf("Data Error!\n");
+		return;
+	}
+
 	TWI_Stop();
 
 	printf("DS1307 Setup!\n");
@@ -100,6 +113,13 @@ int main()
 
 	while(1)
 	{
+		TWI_Start();
+		TWI_Write(DS1307_W);
+		TWI_Write(0x00);
+		TWI_Start();
+		TWI_Write(DS1307_R);
+		printf("%x\n", TWI_Read());
+		_delay_ms(1000);
 	}
 
 	return 0;
