@@ -37,7 +37,7 @@ ISR(USART_RX_vect)
     UDR0 = tmp;
 }
 
-void setupDS1307()
+uint8_t TWI_Start()
 {
 	TWBR = 0x00;
 
@@ -45,35 +45,48 @@ void setupDS1307()
 
 	while(!(TWCR & _BV(TWINT)));
 
-	if((TWSR & 0xf8) != START)
+	return TWSR;
+
+}
+
+uint8_t TWI_Write(uint8_t data)
+{
+	TWDR = data;
+	TWCR = _BV(TWINT) | _BV(TWEN);
+
+	while(!(TWCR & _BV(TWINT)));
+
+	return TWSR;
+}
+
+uint8_t TWI_Stop()
+{
+	TWCR = _BV(TWINT) | _BV(TWEN) | _BV(TWSTO);
+	return TWSR;
+}
+
+void setupDS1307()
+{
+	if((TWI_Start() & 0xf8) != START)
 	{
 		printf("Start Error!\n");
 		return;
 	}
 
-	TWDR = DS1307_W;
-	TWCR = _BV(TWINT) | _BV(TWEN);
-
-	while(!(TWCR & _BV(TWINT)));
-
-	if((TWSR & 0xf8) != MT_SLA_ACK)
+	if((TWI_Write(DS1307_W) & 0xf8) != MT_SLA_ACK)
 	{
 		printf("Slave Addr Error!\n");
 		return;
 	}
 
-	TWDR = 0x00;
-	TWCR = _BV(TWINT) | _BV(TWEN);
-
-	while(!(TWCR & _BV(TWINT)));
-
-	if((TWSR & 0xf8) != MT_DATA_ACK)
+	if((TWI_Write(0x00) & 0xf8) != MT_DATA_ACK)
 	{
 		printf("Data Error!\n");
 		return;
 	}
 
-	TWCR = _BV(TWINT) | _BV(TWEN) | _BV(TWSTO);
+	TWI_Stop();
+
 	printf("DS1307 Setup!\n");
 }
 
