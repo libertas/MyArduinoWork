@@ -2,8 +2,16 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <util/twi.h>
 #include <util/delay.h>
 #include <stdio.h>
+
+#define START 0x08
+#define MT_SLA_ACK 0x18
+#define MT_DATA_ACK 0x28
+
+#define DS1307_R 0xd1
+#define DS1307_W 0xd0
 
 static int usart_putchar(char data, FILE *stream)
 {
@@ -29,15 +37,56 @@ ISR(USART_RX_vect)
     UDR0 = tmp;
 }
 
+void setupDS1307()
+{
+	TWBR = 0x00;
+
+	TWCR = _BV(TWINT) | _BV(TWSTA) | _BV(TWEN);
+
+	while(!(TWCR & _BV(TWINT)));
+
+	if((TWSR & 0xf8) != START)
+	{
+		printf("Start Error!\n");
+		return;
+	}
+
+	TWDR = DS1307_W;
+	TWCR = _BV(TWINT) | _BV(TWEN);
+
+	while(!(TWCR & _BV(TWINT)));
+
+	if((TWSR & 0xf8) != MT_SLA_ACK)
+	{
+		printf("Slave Addr Error!\n");
+		return;
+	}
+
+	TWDR = 0x00;
+	TWCR = _BV(TWINT) | _BV(TWEN);
+
+	while(!(TWCR & _BV(TWINT)));
+
+	if((TWSR & 0xf8) != MT_DATA_ACK)
+	{
+		printf("Data Error!\n");
+		return;
+	}
+
+	TWCR = _BV(TWINT) | _BV(TWEN) | _BV(TWSTO);
+	printf("DS1307 Setup!\n");
+}
+
 int main()
 {
 	initUSART();
 
 	sei();
 
+	setupDS1307();
+
 	while(1)
 	{
-		printf("Hello,World\n");
 	}
 
 	return 0;
