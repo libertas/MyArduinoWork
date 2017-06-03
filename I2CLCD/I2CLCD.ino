@@ -5,6 +5,7 @@
 
 #define I2CLCD_ADDRESS 0x12
 #define EEPROM_SIZE 1024
+#define EEPROM_BLOCK_SIZE 33
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 int count = 0;
@@ -17,8 +18,12 @@ void setup() {
   lcd.begin(16, 2);
   
   eepromaddr = EEPROM.read(0);
+  if((eepromaddr + 1) * EEPROM_BLOCK_SIZE + 1 > EEPROM_SIZE) {
+    eepromaddr = 0;
+    EEPROM.write(0, eepromaddr);
+  }
   for(int i = 0; i < 32; i++) {
-    char c = EEPROM.read(eepromaddr + 1 + i);
+    char c = EEPROM.read(eepromaddr * EEPROM_BLOCK_SIZE + 2 + i);
     ((char*)data)[i] = c;
   }
   
@@ -55,16 +60,20 @@ void loop() {
 }
 
 void updateLCD(char c) {
-  int eepromcount = EEPROM.read(eepromaddr);
+  int eepromcount = EEPROM.read(eepromaddr * EEPROM_BLOCK_SIZE + 1);
   if(eepromcount == 0) {
-    eepromaddr = eepromaddr + 33;
-    if(eepromaddr > EEPROM_SIZE) {
-      eepromaddr = 1;
+    eepromaddr++;
+    if((eepromaddr + 1) * EEPROM_BLOCK_SIZE + 1 > EEPROM_SIZE) {
+      eepromaddr = 0;
     }
-    EEPROM.write(eepromaddr, 0xff);
+    EEPROM.write(eepromaddr * EEPROM_BLOCK_SIZE + 1, 0xff);
     EEPROM.write(0, eepromaddr);
   }
-  EEPROM.write(eepromaddr + 1 + count, c);
+  if(count == 0) {
+    eepromcount = EEPROM.read(eepromaddr * EEPROM_BLOCK_SIZE + 1);
+    EEPROM.write(eepromaddr * EEPROM_BLOCK_SIZE + 1, --eepromcount);
+  }
+  EEPROM.write(eepromaddr * EEPROM_BLOCK_SIZE + 2 + count, c);
   
   data[count / 16][count % 16] = c;
   
