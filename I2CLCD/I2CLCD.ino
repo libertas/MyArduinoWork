@@ -20,23 +20,29 @@ void setup() {
 }
 
 void loop() {
-  lcd.cursor();
+  static int refreshTime = 0;
+  static int cursorTime = 0;
+  static bool cursorState = 1;
   
-  lcd.setCursor(0, 0);
-  lcd.print(data[0]);
-  lcd.setCursor(0, 1);
-  lcd.print(data[1]);
+  if(millis() - cursorTime > 500) {
+    cursorTime = millis();
+    if(cursorState) {
+      cursorState = false;
+      lcd.noCursor();
+    } else {
+      cursorState = true;
+      lcd.cursor();
+    }
+  }
   
-  delay(100);
-  
-  lcd.noCursor();
-  
-  lcd.setCursor(0, 0);
-  lcd.print(data[0]);
-  lcd.setCursor(0, 1);
-  lcd.print(data[1]);
-  
-  delay(100);
+  if(millis() - refreshTime > 100) {
+    refreshTime = millis();
+    lcd.setCursor(0, 0);
+    lcd.print(data[0]);
+    lcd.setCursor(0, 1);
+    lcd.print(data[1]);
+    
+  }
 }
 
 void updateLCD(char c) {
