@@ -1,17 +1,26 @@
 
+#include <EEPROM.h>
 #include <LiquidCrystal.h>
 #include <Wire.h>
 
 #define I2CLCD_ADDRESS 0x12
+#define EEPROM_SIZE 1024
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 int count = 0;
+int eepromaddr;
 
 char data[2][16] = {0};
 
 void setup() {
   
   lcd.begin(16, 2);
+  
+  eepromaddr = EEPROM.read(0);
+  for(int i = 0; i < 32; i++) {
+    char c = EEPROM.read(eepromaddr + 1 + i);
+    ((char*)data)[i] = c;
+  }
   
   Wire.begin(I2CLCD_ADDRESS);
   Wire.onReceive(receiveEvent);
@@ -46,6 +55,17 @@ void loop() {
 }
 
 void updateLCD(char c) {
+  int eepromcount = EEPROM.read(eepromaddr);
+  if(eepromcount == 0) {
+    eepromaddr = eepromaddr + 33;
+    if(eepromaddr > EEPROM_SIZE) {
+      eepromaddr = 1;
+    }
+    EEPROM.write(eepromaddr, 0xff);
+    EEPROM.write(0, eepromaddr);
+  }
+  EEPROM.write(eepromaddr + 1 + count, c);
+  
   data[count / 16][count % 16] = c;
   
   count = (count + 1) % 32;
